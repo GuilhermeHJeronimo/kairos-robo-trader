@@ -1,0 +1,6 @@
+# confluencia2 BTCUSDm iniciada 2026-10-02 13:44:09
+BTCUSDm H1 | confluencia 75%, hierarquia so indicador (peso 1) | ops=779 | por dia=1.85 | acerto=26.3% | R total=+0.0 | R/op=+0.000 ±0.107 | FP=0.98 | tempo=63s
+BTCUSDm H1 | confluencia 75%, hierarquia peso 3 | ops=690 | por dia=1.64 | acerto=27.8% | R total=+69.3 | R/op=+0.100 ±0.119 | FP=1.15 | tempo=62s
+BTCUSDm H1 | confluencia 75% + hierarquia obrigatoria | ops=518 | por dia=1.23 | acerto=24.7% | R total=-5.2 | R/op=-0.010 ±0.133 | FP=0.97 | tempo=60s
+BTCUSDm H1 | confluencia 60%, hierarquia so indicador | ops=912 | por dia=2.17 | acerto=25.1% | R total=-34.5 | R/op=-0.038 ±0.097 | FP=0.93 | tempo=65s
+# concluida

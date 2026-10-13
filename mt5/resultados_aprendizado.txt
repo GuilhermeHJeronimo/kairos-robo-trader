@@ -1,0 +1,16 @@
+# replica iniciado 2026-10-10 09:05:53
+XAUUSDm M5 2026.10.07..2026.10.10 | ao vivo (sem protecoes) | ops=49 | acerto=28.6% | R total=+0.8 | R/op=+0.016 ±0.456 | FP=1.00 | 17s
+BTCUSDm M5 2026.10.07..2026.10.10 | ao vivo (sem protecoes) | ops=69 | acerto=31.9% | R total=+18.3 | R/op=+0.265 ±0.435 | FP=1.35 | 16s
+# concluida
+# variantes iniciado 2026-10-10 09:07:18
+XAUUSDm M5 2026.01.01..2026.10.09 | A base: como estava ao vivo | ops=3659 | acerto=23.9% | R total=-175.8 | R/op=-0.048 ±0.047 | FP=0.89 | 294s
+XAUUSDm M5 2026.01.01..2026.10.09 | B sem posicao contraria | ops=3159 | acerto=24.5% | R total=-99.5 | R/op=-0.032 ±0.051 | FP=0.91 | 281s
+XAUUSDm M5 2026.01.01..2026.10.09 | C freio: 5 perdas seguidas, 3 h | ops=2766 | acerto=23.7% | R total=-178.5 | R/op=-0.065 ±0.054 | FP=0.89 | 251s
+XAUUSDm M5 2026.01.01..2026.10.09 | D sem posicao contraria + freio | ops=2413 | acerto=23.3% | R total=-179.3 | R/op=-0.074 ±0.057 | FP=0.86 | 238s
+XAUUSDm M5 2026.01.01..2026.10.09 | E D + no maximo 4 posicoes e 2% de risco aberto | ops=2246 | acerto=24.1% | R total=-118.7 | R/op=-0.053 ±0.061 | FP=0.90 | 238s
+BTCUSDm M5 2026.01.01..2026.10.09 | A base: como estava ao vivo | ops=4059 | acerto=24.3% | R total=-129.7 | R/op=-0.032 ±0.051 | FP=0.95 | 373s
+BTCUSDm M5 2026.01.01..2026.10.09 | B sem posicao contraria | ops=3570 | acerto=24.2% | R total=-123.2 | R/op=-0.035 ±0.054 | FP=0.93 | 372s
+BTCUSDm M5 2026.01.01..2026.10.09 | C freio: 5 perdas seguidas, 3 h | ops=3156 | acerto=24.4% | R total=-87.9 | R/op=-0.028 ±0.058 | FP=0.94 | 360s
+BTCUSDm M5 2026.01.01..2026.10.09 | D sem posicao contraria + freio | ops=2755 | acerto=24.0% | R total=-117.3 | R/op=-0.043 ±0.062 | FP=0.92 | 352s
+BTCUSDm M5 2026.01.01..2026.10.09 | E D + no maximo 4 posicoes e 2% de risco aberto | ops=2551 | acerto=24.5% | R total=-55.7 | R/op=-0.022 ±0.065 | FP=0.95 | 350s
+# concluida

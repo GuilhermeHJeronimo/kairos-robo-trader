@@ -1,0 +1,5 @@
+BTCUSDm H1 horas=   0 | ops=510 takes=157 saidas_tempo=0 | R total=+105.3 R/op=+0.207 | US$ +6136 | 48s
+BTCUSDm H1 horas=   6 | ops=860 takes=49 saidas_tempo=526 | R total=+7.2 R/op=+0.008 | US$ +198 | 55s
+BTCUSDm H1 horas=  12 | ops=815 takes=85 saidas_tempo=350 | R total=+19.4 R/op=+0.024 | US$ +711 | 56s
+BTCUSDm H1 horas=  24 | ops=710 takes=113 saidas_tempo=193 | R total=+64.4 R/op=+0.091 | US$ +3257 | 54s
+BTCUSDm H1 horas=  48 | ops=619 takes=134 saidas_tempo=91 | R total=+79.4 R/op=+0.128 | US$ +4213 | 52s

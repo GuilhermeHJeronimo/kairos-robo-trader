@@ -1,0 +1,5 @@
+XAUUSDm H1 horas=   0 | ops=395 takes=87 saidas_tempo=0 | R total=+34.6 R/op=+0.088 | US$ +1624 | 38s
+XAUUSDm H1 horas=   6 | ops=549 takes=18 saidas_tempo=339 | R total=-2.8 R/op=-0.005 | US$ -203 | 41s
+XAUUSDm H1 horas=  12 | ops=515 takes=47 saidas_tempo=215 | R total=+11.1 R/op=+0.022 | US$ +428 | 38s
+XAUUSDm H1 horas=  24 | ops=469 takes=70 saidas_tempo=121 | R total=+48.9 R/op=+0.104 | US$ +2513 | 39s
+XAUUSDm H1 horas=  48 | ops=423 takes=84 saidas_tempo=30 | R total=+37.8 R/op=+0.089 | US$ +1811 | 33s

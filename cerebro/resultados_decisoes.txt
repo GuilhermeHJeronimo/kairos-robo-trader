@@ -1,0 +1,30 @@
+
+=== BTCUSDm H1 | 6539 sinais, todos executados no teste (2021.11.02 a 2026.09.25) ===
+faixa de confluência      2021-2023                                   2024-2026
+< 50%                     n=  227 R/op=-0.082 (±0.100) acerto=22.9%   n=  271 R/op=-0.084 (±0.136) acerto=21.8%
+50% a 74%                 n= 1168 R/op=-0.124 (±0.043) acerto=21.9%   n= 1009 R/op=+0.151 (±0.076) acerto=27.6%
+75% a 89%                 n= 1500 R/op=-0.143 (±0.037) acerto=21.7%   n= 1041 R/op=+0.042 (±0.076) acerto=25.5%
+90% a 100%                n=  826 R/op=-0.091 (±0.052) acerto=22.8%   n=  497 R/op=-0.091 (±0.106) acerto=23.3%
+>= 75% (regra atual)      n= 2326 R/op=-0.125 (±0.030) acerto=22.1%   n= 1538 R/op=-0.001 (±0.062) acerto=24.8%
+-- por número de indicadores com opinião --
+< 6 opiniões              n=    6 R/op=-0.301 (±0.492) acerto=16.7%   n=    5 R/op=+1.009 (±1.286) acerto=40.0%
+6 a 7                     n=  855 R/op=-0.197 (±0.049) acerto=19.3%   n=  624 R/op=+0.122 (±0.095) acerto=26.8%
+8 ou mais                 n= 2817 R/op=-0.098 (±0.028) acerto=22.9%   n= 2162 R/op=+0.020 (±0.052) acerto=25.0%
+-- todos os sinais (referência) --
+sem filtro                n= 3721 R/op=-0.122 (±0.024) acerto=22.1%   n= 2818 R/op=+0.046 (±0.045) acerto=25.5%
+correlação confluência x R = -0.015 (0 = sem relação)
+
+=== XAUUSDm H1 | 6561 sinais, todos executados no teste (2021.11.04 a 2026.09.25) ===
+faixa de confluência      2021-2023                                   2024-2026
+< 50%                     n=  170 R/op=-0.257 (±0.102) acerto=20.0%   n=  257 R/op=-0.033 (±0.092) acerto=26.1%
+50% a 74%                 n=  942 R/op=-0.102 (±0.046) acerto=25.1%   n= 1189 R/op=-0.069 (±0.042) acerto=25.7%
+75% a 89%                 n= 1210 R/op=-0.046 (±0.040) acerto=28.2%   n= 1470 R/op=+0.076 (±0.040) acerto=31.4%
+90% a 100%                n=  610 R/op=+0.053 (±0.059) acerto=32.1%   n=  713 R/op=+0.169 (±0.058) acerto=35.6%
+>= 75% (regra atual)      n= 1820 R/op=-0.013 (±0.033) acerto=29.5%   n= 2183 R/op=+0.107 (±0.033) acerto=32.8%
+-- por número de indicadores com opinião --
+< 6 opiniões              n=    5 R/op=+0.536 (±0.801) acerto=40.0%   n=0
+6 a 7                     n=  659 R/op=-0.061 (±0.056) acerto=26.3%   n=  490 R/op=+0.071 (±0.068) acerto=30.2%
+8 ou mais                 n= 2217 R/op=-0.059 (±0.030) acerto=27.8%   n= 3128 R/op=+0.033 (±0.027) acerto=29.9%
+-- todos os sinais (referência) --
+sem filtro                n= 2932 R/op=-0.056 (±0.026) acerto=27.5%   n= 3629 R/op=+0.039 (±0.025) acerto=30.0%
+correlação confluência x R = +0.056 (0 = sem relação)

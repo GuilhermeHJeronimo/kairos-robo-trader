@@ -1,0 +1,80 @@
+BTCUSDm_H1: 6539 trades, de 2021.11.02 a 2026.09.25
+BTCUSDm_M15: 7325 trades, de 2023.01.12 a 2026.09.13
+XAUUSDm_H1: 6561 trades, de 2021.11.04 a 2026.09.25
+XAUUSDm_M15: 11768 trades, de 2023.01.03 a 2026.08.12
+
+=== BTCUSDm_H1 | treino até 2024.08.31: 4577 trades (22.4% TAKE) | teste: 1962 trades (26.2% TAKE)
+AUC treino 0.576 | AUC TESTE 0.520   (0,500 = nenhuma capacidade de previsão)
+sem filtro (teste):                 n= 1962 acerto= 26.2% R/op=+0.072 ±0.108
+cérebro: só o 50% melhor (teste):   n=  981 acerto= 27.0% R/op=+0.111 ±0.157
+cérebro: só o 30% melhor (teste):   n=  588 acerto= 28.2% R/op=+0.185 ±0.209
+cérebro: só o 20% melhor (teste):   n=  392 acerto= 29.3% R/op=+0.236 ±0.260
+cérebro: só o 10% melhor (teste):   n=  196 acerto= 30.6% R/op=+0.353 ±0.381
+controle: 20% ao acaso (teste):     n=  392 acerto= 23.5% R/op=-0.055 ±0.237
+pesos maiores: ema50_atr +0.28, v_medias -0.19, v_hier -0.12, atr_ratio +0.11, rsi -0.11, macd_atr +0.09
+--- BTCUSDm_H1: teste semestre a semestre (treina só com o passado; filtro = 30% melhores) ---
+2023S1: AUC 0.515 | todos n=  693 acerto= 21.5% R/op=-0.134 ±0.103 | cérebro n=  207 acerto= 19.8% R/op=-0.198 ±0.180
+2023S2: AUC 0.489 | todos n=  861 acerto= 23.1% R/op=-0.095 ±0.097 | cérebro n=  258 acerto= 21.3% R/op=-0.158 ±0.171
+2024S1: AUC 0.516 | todos n=  676 acerto= 22.8% R/op=-0.045 ±0.170 | cérebro n=  202 acerto= 24.8% R/op=+0.099 ±0.322
+2024S2: AUC 0.505 | todos n=  533 acerto= 24.2% R/op=-0.023 ±0.219 | cérebro n=  159 acerto= 26.4% R/op=+0.104 ±0.448
+2025S1: AUC 0.566 | todos n=  245 acerto= 25.3% R/op=+0.020 ±0.339 | cérebro n=   73 acerto= 31.5% R/op=+0.519 ±0.689
+2025S2: AUC 0.587 | todos n=  243 acerto= 25.5% R/op=+0.038 ±0.336 | cérebro n=   72 acerto= 31.9% R/op=+0.498 ±0.678
+2026S1: AUC 0.479 | todos n=  648 acerto= 27.5% R/op=+0.145 ±0.184 | cérebro n=  194 acerto= 25.3% R/op=+0.009 ±0.342
+2026S2: AUC 0.544 | todos n=  473 acerto= 28.1% R/op=+0.132 ±0.192 | cérebro n=  141 acerto= 31.9% R/op=+0.263 ±0.374
+JUNTANDO TODOS OS SEMESTRES  sem filtro: n= 4372 acerto= 24.4% R/op=-0.011 ±0.063
+                             cérebro:    n= 1306 acerto= 25.1% R/op=+0.052 ±0.121
+
+=== BTCUSDm_M15 | treino até 2024.11.29: 5127 trades (22.6% TAKE) | teste: 2198 trades (21.9% TAKE)
+AUC treino 0.602 | AUC TESTE 0.539   (0,500 = nenhuma capacidade de previsão)
+sem filtro (teste):                 n= 2198 acerto= 21.9% R/op=-0.183 ±0.102
+cérebro: só o 50% melhor (teste):   n= 1099 acerto= 22.9% R/op=-0.131 ±0.146
+cérebro: só o 30% melhor (teste):   n=  659 acerto= 23.7% R/op=-0.106 ±0.191
+cérebro: só o 20% melhor (teste):   n=  439 acerto= 26.0% R/op=+0.007 ±0.238
+cérebro: só o 10% melhor (teste):   n=  219 acerto= 29.2% R/op=+0.168 ±0.352
+controle: 20% ao acaso (teste):     n=  439 acerto= 19.4% R/op=-0.339 ±0.216
+pesos maiores: v_hier -0.27, side +0.26, hier_al +0.24, v_vwap +0.20, v_medias -0.16, rsi +0.12
+--- BTCUSDm_M15: teste semestre a semestre (treina só com o passado; filtro = 30% melhores) ---
+2024S2: AUC 0.531 | todos n= 3106 acerto= 23.8% R/op=-0.032 ±0.065 | cérebro n=  931 acerto= 26.7% R/op=+0.114 ±0.126
+2025S1: AUC 0.526 | todos n= 1091 acerto= 21.8% R/op=-0.178 ±0.147 | cérebro n=  327 acerto= 23.5% R/op=-0.098 ±0.277
+2025S2: AUC 0.574 | todos n=  164 acerto= 19.5% R/op=-0.342 ±0.428 | cérebro n=   49 acerto= 22.4% R/op=-0.088 ±0.868
+2026S1: AUC 0.460 | todos n=  162 acerto= 21.0% R/op=-0.280 ±0.441 | cérebro n=   48 acerto= 18.8% R/op=-0.404 ±0.799
+2026S2: AUC 0.579 | todos n=  120 acerto= 19.2% R/op=-0.393 ±0.469 | cérebro n=   36 acerto= 27.8% R/op=+0.192 ±1.035
+JUNTANDO TODOS OS SEMESTRES  sem filtro: n= 4643 acerto= 23.0% R/op=-0.095 ±0.061
+                             cérebro:    n= 1391 acerto= 25.6% R/op=+0.041 ±0.117
+
+=== XAUUSDm_H1 | treino até 2025.03.20: 4592 trades (28.0% TAKE) | teste: 1969 trades (30.8% TAKE)
+AUC treino 0.600 | AUC TESTE 0.545   (0,500 = nenhuma capacidade de previsão)
+sem filtro (teste):                 n= 1969 acerto= 30.8% R/op=+0.042 ±0.070
+cérebro: só o 50% melhor (teste):   n=  984 acerto= 33.3% R/op=+0.085 ±0.102
+cérebro: só o 30% melhor (teste):   n=  590 acerto= 36.3% R/op=+0.184 ±0.138
+cérebro: só o 20% melhor (teste):   n=  393 acerto= 37.9% R/op=+0.242 ±0.172
+cérebro: só o 10% melhor (teste):   n=  196 acerto= 40.3% R/op=+0.262 ±0.246
+controle: 20% ao acaso (teste):     n=  393 acerto= 32.6% R/op=+0.131 ±0.167
+pesos maiores: vwap_atr -0.23, v_hier +0.17, v_medias +0.17, macd_atr +0.16, atr_ratio +0.12, rsi -0.11
+--- XAUUSDm_H1: teste semestre a semestre (treina só com o passado; filtro = 30% melhores) ---
+2023S1: AUC 0.568 | todos n=  690 acerto= 28.4% R/op=-0.026 ±0.104 | cérebro n=  207 acerto= 33.3% R/op=+0.028 ±0.180
+2023S2: AUC 0.543 | todos n=  638 acerto= 28.5% R/op=-0.013 ±0.110 | cérebro n=  191 acerto= 32.5% R/op=+0.121 ±0.203
+2024S1: AUC 0.593 | todos n=  744 acerto= 25.7% R/op=-0.074 ±0.099 | cérebro n=  223 acerto= 31.4% R/op=+0.047 ±0.191
+2024S2: AUC 0.552 | todos n=  655 acerto= 31.0% R/op=+0.091 ±0.106 | cérebro n=  196 acerto= 35.7% R/op=+0.165 ±0.199
+2025S1: AUC 0.582 | todos n=  634 acerto= 31.9% R/op=+0.120 ±0.113 | cérebro n=  190 acerto= 36.8% R/op=+0.292 ±0.224
+2025S2: AUC 0.623 | todos n=  630 acerto= 30.5% R/op=+0.003 ±0.118 | cérebro n=  189 acerto= 43.9% R/op=+0.375 ±0.231
+2026S1: AUC 0.490 | todos n=  602 acerto= 33.7% R/op=+0.143 ±0.149 | cérebro n=  180 acerto= 31.7% R/op=+0.052 ±0.289
+2026S2: AUC 0.444 | todos n=  364 acerto= 26.4% R/op=-0.074 ±0.132 | cérebro n=  109 acerto= 22.9% R/op=-0.195 ±0.234
+JUNTANDO TODOS OS SEMESTRES  sem filtro: n= 4957 acerto= 29.6% R/op=+0.023 ±0.041
+                             cérebro:    n= 1485 acerto= 34.1% R/op=+0.125 ±0.078
+
+=== XAUUSDm_M15 | treino até 2024.07.01: 8237 trades (25.0% TAKE) | teste: 3531 trades (24.1% TAKE)
+AUC treino 0.561 | AUC TESTE 0.480   (0,500 = nenhuma capacidade de previsão)
+sem filtro (teste):                 n= 3531 acerto= 24.1% R/op=-0.041 ±0.076
+cérebro: só o 50% melhor (teste):   n= 1765 acerto= 22.5% R/op=-0.115 ±0.112
+cérebro: só o 30% melhor (teste):   n= 1059 acerto= 22.5% R/op=-0.138 ±0.146
+cérebro: só o 20% melhor (teste):   n=  706 acerto= 22.5% R/op=-0.158 ±0.179
+cérebro: só o 10% melhor (teste):   n=  353 acerto= 20.7% R/op=-0.291 ±0.253
+controle: 20% ao acaso (teste):     n=  706 acerto= 23.5% R/op=-0.099 ±0.164
+pesos maiores: atr_ratio +0.15, v_hier +0.14, hier_ao +0.13, risk_atr +0.08, rsi +0.08, ema50_atr -0.08
+--- XAUUSDm_M15: teste semestre a semestre (treina só com o passado; filtro = 30% melhores) ---
+2024S2: AUC 0.482 | todos n= 2152 acerto= 24.3% R/op=-0.036 ±0.089 | cérebro n=  645 acerto= 23.6% R/op=-0.060 ±0.182
+2025S1: AUC 0.510 | todos n= 1044 acerto= 24.0% R/op=-0.016 ±0.151 | cérebro n=  313 acerto= 26.2% R/op=+0.060 ±0.297
+2025S2: AUC 0.500 | todos n=  338 acerto= 23.1% R/op=-0.159 ±0.288 | cérebro n=  101 acerto= 20.8% R/op=-0.331 ±0.534
+JUNTANDO TODOS OS SEMESTRES  sem filtro: n= 3534 acerto= 24.1% R/op=-0.042 ±0.076
+                             cérebro:    n= 1059 acerto= 24.1% R/op=-0.050 ±0.150

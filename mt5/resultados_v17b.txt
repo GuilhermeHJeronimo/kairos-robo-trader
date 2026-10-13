@@ -1,0 +1,8 @@
+# matriz v1.7 iniciada 2026-10-02 11:33:17
+M15 | 1 posicao, pausa 30 | desde 2025.08.01 | ops=796 | por dia util=2.65 | acerto=29.8% | R total=+79.9 | R/op=+0.100 ±0.110 | FP=1.14 | tempo=183s
+M30 | 1 posicao, pausa 30 | desde 2025.08.01 | ops=443 | por dia util=1.47 | acerto=30.7% | R total=+48.0 | R/op=+0.108 ±0.141 | FP=1.18 | tempo=90s
+H1 | 1 posicao, pausa 30 | desde 2025.08.01 | ops=243 | por dia util=0.81 | acerto=38.3% | R total=+48.3 | R/op=+0.199 ±0.179 | FP=1.38 | tempo=54s
+M15 | 3 posicoes (risco total 1,5%), pausa 30 | desde 2025.08.01 | ops=1658 | por dia util=5.51 | acerto=28.2% | R total=+109.7 | R/op=+0.066 ±0.074 | FP=1.08 | tempo=205s
+M30 | 3 posicoes (risco total 1,5%), pausa 30 | desde 2025.08.01 | ops=1006 | por dia util=3.35 | acerto=29.7% | R total=+92.3 | R/op=+0.092 ±0.092 | FP=1.13 | tempo=116s
+H1 | 3 posicoes (risco total 1,5%), pausa 30 | desde 2025.08.01 | ops=567 | por dia util=1.89 | acerto=37.2% | R total=+103.9 | R/op=+0.183 ±0.113 | FP=1.33 | tempo=60s
+# concluida

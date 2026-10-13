@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.log
+*.bak
+*.ex5
+.env
+server.log
+server_err.log
+# dados pesados ou locais
+cerebro/dados/
+cerebro/dados_antigos/
+mt5/*.csv
+assets3d/
+legado/
+graficos/

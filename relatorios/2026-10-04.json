@@ -1,0 +1,17 @@
+{
+ "dia": "2026-10-04",
+ "fechado": true,
+ "entradas": 0,
+ "fechados": 2,
+ "takes": 0,
+ "usd": -91.67,
+ "r": -1.86,
+ "por_ativo": {
+  "Bitcoin": {
+   "fechados": 2,
+   "takes": 0,
+   "usd": -91.67,
+   "r": -1.86
+  }
+ }
+}

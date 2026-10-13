@@ -1,0 +1,11 @@
+## 2021.11.01 2023.12.31
+XAUUSDm H1 conf=  75 | ops=1263 takes=251 saidas_tempo=0 | R total=-35.5 R/op=-0.028 | US$ -2224 | 76s
+XAUUSDm H1 conf=  85 | ops=966 takes=187 saidas_tempo=0 | R total=-22.2 R/op=-0.023 | US$ -1525 | 71s
+XAUUSDm H1 conf=  90 | ops=551 takes=113 saidas_tempo=0 | R total=+24.5 R/op=+0.044 | US$ +955 | 66s
+XAUUSDm H1 conf=  95 | ops=422 takes=86 saidas_tempo=0 | R total=+30.4 R/op=+0.072 | US$ +1371 | 64s
+## 2024.01.01 2026.09.26
+XAUUSDm H1 conf=  75 | ops=1561 takes=385 saidas_tempo=0 | R total=+243.4 R/op=+0.156 | US$ +20218 | 92s
+XAUUSDm H1 conf=  85 | ops=1153 takes=282 saidas_tempo=0 | R total=+187.2 R/op=+0.162 | US$ +13671 | 86s
+XAUUSDm H1 conf=  90 | ops=699 takes=173 saidas_tempo=0 | R total=+139.9 R/op=+0.200 | US$ +9329 | 82s
+XAUUSDm H1 conf=  95 | ops=494 takes=127 saidas_tempo=0 | R total=+119.9 R/op=+0.243 | US$ +7746 | 80s
+FIM

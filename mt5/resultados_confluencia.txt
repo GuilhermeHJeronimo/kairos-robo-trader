@@ -1,0 +1,16 @@
+# confluencia XAUUSDm M15 iniciada 2026-10-02 12:59:25
+XAUUSDm M15 | A regra antiga: hierarquia obrigatoria, sem confluencia | ops=1650 | por dia=5.49 | acerto=27.9% | R total=+113.1 | R/op=+0.069 ±0.074 | FP=1.08 | tempo=150s
+XAUUSDm M15 | B confluencia 75%, hierarquia so indicador | ops=1748 | por dia=5.81 | acerto=25.9% | R total=-9.2 | R/op=-0.005 ±0.067 | FP=0.98 | tempo=151s
+XAUUSDm M15 | C confluencia 75% + hierarquia obrigatoria | ops=1374 | por dia=4.57 | acerto=28.3% | R total=+108.5 | R/op=+0.079 ±0.082 | FP=1.09 | tempo=145s
+XAUUSDm M15 | D confluencia 65%, hierarquia so indicador | ops=1799 | por dia=5.98 | acerto=25.1% | R total=-90.1 | R/op=-0.050 ±0.064 | FP=0.91 | tempo=151s
+XAUUSDm M15 | E confluencia 55%, hierarquia so indicador | ops=1944 | por dia=6.46 | acerto=25.1% | R total=-110.1 | R/op=-0.057 ±0.061 | FP=0.90 | tempo=152s
+XAUUSDm M15 | F sem hierarquia e sem confluencia (tudo que o leitor acha) | ops=2102 | por dia=6.99 | acerto=26.0% | R total=-51.5 | R/op=-0.025 ±0.060 | FP=0.95 | tempo=154s
+# concluida
+# confluencia BTCUSDm M15 iniciada 2026-10-02 13:14:31
+BTCUSDm M15 | A regra antiga: hierarquia obrigatoria, sem confluencia | ops=2211 | por dia=5.25 | acerto=22.7% | R total=-176.7 | R/op=-0.080 ±0.062 | FP=0.87 | tempo=212s
+BTCUSDm M15 | B confluencia 75%, hierarquia so indicador | ops=2390 | por dia=5.68 | acerto=25.3% | R total=-34.6 | R/op=-0.014 ±0.063 | FP=0.96 | tempo=213s
+BTCUSDm M15 | C confluencia 75% + hierarquia obrigatoria | ops=1690 | por dia=4.01 | acerto=23.6% | R total=-84.2 | R/op=-0.050 ±0.073 | FP=0.90 | tempo=204s
+BTCUSDm M15 | D confluencia 65%, hierarquia so indicador | ops=2517 | por dia=5.98 | acerto=24.9% | R total=-84.2 | R/op=-0.033 ±0.060 | FP=0.94 | tempo=216s
+BTCUSDm M15 | E confluencia 55%, hierarquia so indicador | ops=2708 | por dia=6.43 | acerto=24.5% | R total=-137.3 | R/op=-0.051 ±0.056 | FP=0.90 | tempo=218s
+BTCUSDm M15 | F sem hierarquia e sem confluencia (tudo que o leitor acha) | ops=2841 | por dia=6.75 | acerto=24.3% | R total=-227.3 | R/op=-0.080 ±0.054 | FP=0.89 | tempo=218s
+# concluida

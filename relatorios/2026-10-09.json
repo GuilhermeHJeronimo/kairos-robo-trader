@@ -1,0 +1,23 @@
+{
+ "dia": "2026-10-09",
+ "fechado": true,
+ "entradas": 23,
+ "fechados": 21,
+ "takes": 7,
+ "usd": 166.48,
+ "r": 4.27,
+ "por_ativo": {
+  "Ouro": {
+   "fechados": 7,
+   "takes": 1,
+   "usd": -231.53,
+   "r": -5.41
+  },
+  "Bitcoin": {
+   "fechados": 14,
+   "takes": 6,
+   "usd": 398.01,
+   "r": 9.68
+  }
+ }
+}

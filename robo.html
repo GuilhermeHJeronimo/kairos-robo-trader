@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kairos</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%23e8b64c'/%3E%3Ctext x='16' y='21' font-size='13' font-weight='700' text-anchor='middle' fill='%230b0e14' font-family='sans-serif'%3EAu%3C/text%3E%3C/svg%3E">
+<script type="importmap">{"imports":{"three":"/assets3d/vendor/three/three.module.min.js"}}</script>
+<script src="/lightweight-charts.js"></script>
+<style>
+  :root { --bg:#0a0d13; --bg2:#0e121a; --surface:#121824; --surface2:#171e2c; --line:#222b3b; --line2:#1a2230; --txt:#e8edf5; --mut:#8a96a8; --dim:#5b677a;
+    --up:#2ebd85; --up-bg:rgba(46,189,133,.12); --dn:#f6465d; --dn-bg:rgba(246,70,93,.12); --gold:#e8b64c; --gold-bg:rgba(232,182,76,.12); --blue:#5b9dff; --blue-bg:rgba(91,157,255,.12);
+    --r:14px; --shadow:0 8px 24px rgba(0,0,0,.28); --font:Inter,"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,sans-serif; }
+  * { box-sizing:border-box; }
+  html { background:var(--bg); }
+  body { margin:0; color:var(--txt); font:14px/1.5 var(--font); font-variant-numeric:tabular-nums; min-height:100vh;
+    background:radial-gradient(1100px 500px at 15% -10%, rgba(232,182,76,.07), transparent 60%), radial-gradient(900px 500px at 100% 0%, rgba(91,157,255,.06), transparent 55%), var(--bg); }
+  button { font:inherit; color:inherit; cursor:pointer; } a { color:var(--gold); text-decoration:none; } a:hover { text-decoration:underline; }
+  .buy{color:var(--up)} .sell{color:var(--dn)} .mut{color:var(--mut)} .warn{color:var(--gold)} .blue{color:var(--blue)} .dim{color:var(--dim)}
+  .topbar { display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:10px 20px; position:sticky; top:0; z-index:30; background:rgba(10,13,19,.86); backdrop-filter:blur(12px); border-bottom:1px solid var(--line2); }
+  .topbar h1 { margin:0; font-size:16px; } .topbar .sub { font-size:12px; color:var(--mut); }
+  .pill { display:inline-flex; align-items:center; gap:7px; padding:4px 11px; border-radius:999px; font-size:12.5px; font-weight:600; border:1px solid var(--line); background:var(--surface); color:var(--mut); }
+  .pill i { width:8px; height:8px; border-radius:50%; background:var(--dim); }
+  .pill.ok { color:var(--up); background:var(--up-bg); border-color:transparent; } .pill.ok i { background:var(--up); animation:pulse 1.8s infinite; }
+  .pill.bad { color:var(--dn); background:var(--dn-bg); border-color:transparent; } .pill.bad i { background:var(--dn); }
+  .pill.pause { color:var(--gold); background:var(--gold-bg); border-color:transparent; } .pill.pause i { background:var(--gold); }
+  .pill.demo { color:var(--blue); background:var(--blue-bg); border-color:transparent; } .pill.real { color:#fff; background:var(--dn); border-color:transparent; }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(46,189,133,.55)} 70%{box-shadow:0 0 0 8px rgba(46,189,133,0)} 100%{box-shadow:0 0 0 0 rgba(46,189,133,0)} }
+  .spacer { flex:1; }
+  .ctl { display:flex; gap:8px; align-items:center; }
+  .btn { border:1px solid var(--line); background:var(--surface); border-radius:10px; padding:7px 13px; font-weight:600; font-size:13px; transition:.15s; }
+  .btn:hover:not(:disabled) { border-color:rgba(232,182,76,.55); } .btn:disabled { opacity:.45; cursor:not-allowed; }
+  .btn.gold { background:linear-gradient(180deg,#f0c463,#d9a437); color:#1a1305; border:0; } .btn.red { color:var(--dn); border-color:rgba(246,70,93,.45); } .btn.red:hover:not(:disabled) { background:var(--dn-bg); }
+  .btn.small { padding:4px 10px; font-size:12px; border-radius:8px; }
+  :root { color-scheme:dark; }
+  button, a, input, select { touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+  :focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+  .menubtn { display:inline-flex; align-items:center; gap:8px; border:1px solid var(--line); background:var(--surface); border-radius:12px; padding:8px 13px; font-weight:700; font-size:14px; transition:background-color .15s, border-color .15s; }
+  .menubtn:hover { background:var(--surface2); border-color:var(--gold); } .menubtn .bars { font-size:18px; line-height:1; }
+  nav.tabs { position:fixed; z-index:60; top:0; left:0; bottom:0; width:min(290px,86vw); display:flex; flex-direction:column; gap:4px; padding:18px 12px; overflow-y:auto; overscroll-behavior:contain; background:linear-gradient(180deg,#121a2a,#0b0f17); border-right:1px solid var(--line); box-shadow:12px 0 40px rgba(0,0,0,.55); transform:translateX(-104%); visibility:hidden; transition:transform .22s ease, visibility 0s linear .22s; }
+  nav.tabs.open { transform:none; visibility:visible; transition:transform .22s ease, visibility 0s; }
+  nav.tabs .navhead { display:flex; align-items:center; justify-content:space-between; padding:2px 8px 12px; color:var(--mut); font-size:12px; letter-spacing:.1em; text-transform:uppercase; }
+  nav.tabs button.tabbtn { display:flex; align-items:center; gap:12px; width:100%; text-align:left; background:none; border:1px solid transparent; border-radius:12px; padding:11px 12px; color:var(--txt); font-weight:600; font-size:14.5px; transition:background-color .15s, border-color .15s, color .15s; }
+  nav.tabs button.tabbtn .ic { width:30px; height:30px; display:grid; place-items:center; border-radius:9px; background:var(--surface2); font-size:16px; flex:none; }
+  nav.tabs button.tabbtn:hover { background:var(--surface); border-color:var(--line); }
+  nav.tabs button.tabbtn.on { background:var(--gold-bg); border-color:rgba(232,182,76,.4); color:var(--gold); } nav.tabs button.tabbtn.on .ic { background:rgba(232,182,76,.18); }
+  #scrim { position:fixed; inset:0; z-index:55; background:rgba(3,5,9,.6); backdrop-filter:blur(2px); opacity:0; pointer-events:none; transition:opacity .2s; } #scrim.open { opacity:1; pointer-events:auto; }
+  body.is-office #fSym { display:none; }
+  body.is-office main { max-width:1500px; }
+  @media (prefers-reduced-motion:reduce) { nav.tabs, nav.tabs.open, #scrim, .ofbar i { transition:none; } }
+  main { padding:16px 20px 40px; max-width:1360px; margin:0 auto; }
+  .page { display:none; } .page.on { display:block; }
+  .banner { padding:11px 14px; border-radius:12px; margin-bottom:12px; font-size:13.5px; display:none; }
+  .banner.show { display:block; } .banner.red { background:var(--dn-bg); color:var(--dn); border:1px solid rgba(246,70,93,.4); } .banner.gold { background:var(--gold-bg); color:var(--gold); border:1px solid rgba(232,182,76,.35); } .banner.blue { background:var(--blue-bg); color:var(--blue); border:1px solid rgba(91,157,255,.35); }
+  .grid { display:grid; gap:14px; margin-bottom:14px; } .kpis { grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); }
+  .two { grid-template-columns:repeat(2,minmax(0,1fr)); } .three { grid-template-columns:repeat(3,minmax(0,1fr)); } @media (max-width:980px){ .two,.three{grid-template-columns:1fr} }
+  .card { background:linear-gradient(180deg,var(--surface),var(--bg2)); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow); }
+  .card-h { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:12px 16px 0; } .card-h h2 { margin:0; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--mut); font-weight:600; } .card-h .r { margin-left:auto; font-size:12px; color:var(--mut); }
+  .card-b { padding:10px 16px 16px; }
+  .kpi { padding:14px 16px; } .kpi .l { font-size:12px; color:var(--mut); } .kpi .v { font-size:24px; font-weight:700; line-height:1.2; margin-top:2px; } .kpi .s { font-size:12px; color:var(--mut); margin-top:2px; }
+  .meter { height:7px; border-radius:4px; background:#1b2333; margin-top:8px; overflow:hidden; } .meter i { display:block; height:100%; border-radius:4px; background:var(--up); transition:width .4s; } .meter i.mid { background:var(--gold); } .meter i.hi { background:var(--dn); }
+  .row { display:flex; justify-content:space-between; gap:10px; align-items:baseline; }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .chip { font-size:12px; padding:2px 9px; border-radius:999px; border:1px solid var(--line); color:var(--mut); }
+  .chip.ok { color:var(--up); border-color:rgba(46,189,133,.4); background:var(--up-bg); } .chip.no { color:var(--dim); text-decoration:line-through; }
+  .chip.bad { color:var(--dn); border-color:rgba(246,70,93,.45); background:var(--dn-bg); } .chip.warn { color:var(--gold); border-color:rgba(232,182,76,.4); background:var(--gold-bg); }
+  .check { display:grid; gap:7px; } .check div { display:flex; gap:9px; align-items:baseline; font-size:13.5px; } .check b { width:18px; text-align:center; }
+  .empty { text-align:center; color:var(--mut); padding:22px 8px; font-size:13.5px; }
+  .badge { display:inline-block; font-size:11px; font-weight:700; letter-spacing:.04em; padding:1px 8px; border-radius:6px; text-align:center; background:var(--surface2); color:var(--mut); }
+  .badge.buy { background:var(--up-bg); color:var(--up); } .badge.sell { background:var(--dn-bg); color:var(--dn); } .badge.gold { background:var(--gold-bg); color:var(--gold); } .badge.blue { background:var(--blue-bg); color:var(--blue); }
+  .filters { display:inline-flex; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:3px; gap:2px; flex-wrap:wrap; }
+  .filters button { background:none; border:0; padding:4px 11px; border-radius:7px; color:var(--mut); font-size:12.5px; font-weight:600; } .filters button.on { background:var(--surface2); color:var(--gold); box-shadow:inset 0 0 0 1px rgba(232,182,76,.35); }
+  .ladder { position:relative; height:10px; border-radius:5px; background:linear-gradient(90deg,var(--dn),#39415a 50%,var(--up)); margin:18px 0 6px; }
+  .ladder .m { position:absolute; top:-5px; width:4px; height:20px; border-radius:2px; background:#fff; transform:translateX(-2px); box-shadow:0 0 8px rgba(255,255,255,.5); }
+  .lvls { display:flex; justify-content:space-between; font-size:12px; color:var(--mut); } .lvls b { display:block; color:var(--txt); font-size:13.5px; } .lvls div:nth-child(2){text-align:center} .lvls div:nth-child(3){text-align:right}
+  table.tbl { width:100%; border-collapse:collapse; font-size:12.5px; } .tbl th,.tbl td { padding:7px 6px; text-align:right; border-bottom:1px solid var(--line2); white-space:nowrap; } .tbl th:first-child,.tbl td:first-child { text-align:left; }
+  .tbl th { color:var(--dim); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.04em; }
+  .tbl tr.trow { cursor:pointer; } .tbl tr.trow:hover td { background:rgba(255,255,255,.025); } .tbl tr.detail td { white-space:normal; text-align:left; background:rgba(255,255,255,.02); padding:10px 14px; }
+  .scroll { overflow:auto; max-height:560px; }
+  .verdict { padding:10px 12px; border-radius:10px; font-size:13px; margin:10px 0; background:var(--gold-bg); color:var(--gold); } .verdict.good{background:var(--up-bg);color:var(--up)} .verdict.bad{background:var(--dn-bg);color:var(--dn)}
+  .dec { border:1px solid var(--line); border-left:3px solid var(--dim); border-radius:12px; padding:11px 13px; margin-bottom:10px; background:rgba(255,255,255,.015); }
+  .dec.ENTROU { border-left-color:var(--up); } .dec.NAO_ENTROU { border-left-color:var(--dn); } .dec.EM_VERIFICACAO { border-left-color:var(--blue); }
+  .dec .top { display:flex; gap:8px; align-items:center; flex-wrap:wrap; } .dec .top .t { margin-left:auto; color:var(--dim); font-size:12px; } .dec .sum { margin:6px 0 2px; font-size:13.5px; }
+  .ring { width:38px; height:38px; }
+  .ev { display:grid; grid-template-columns:132px 92px 1fr; gap:10px; padding:8px 4px; border-top:1px solid var(--line2); font-size:13px; align-items:baseline; } .ev:first-child { border-top:0; }
+  @media (max-width:700px){ .ev{grid-template-columns:1fr; gap:2px} }
+  .ev .t { color:var(--dim); font-size:12px; } .ev .x { color:var(--mut); word-break:break-word; } .ev .x b { color:var(--txt); font-weight:600; }
+  .bars { display:grid; gap:7px; } .bar { display:grid; grid-template-columns:150px 1fr 44px; gap:10px; align-items:center; font-size:12.5px; } .bar .b { height:8px; border-radius:4px; background:#1b2333; overflow:hidden; } .bar .b i { display:block; height:100%; background:var(--gold); border-radius:4px; }
+  .chart { height:300px; } .chart.tall { height:420px; }
+  .tip { position:fixed; z-index:50; background:#0e121a; border:1px solid var(--line); border-radius:8px; padding:6px 10px; font-size:12px; pointer-events:none; display:none; box-shadow:var(--shadow); }
+  #toast { position:fixed; right:18px; bottom:18px; z-index:60; display:grid; gap:8px; } #toast div { background:var(--surface2); border:1px solid var(--line); border-left:3px solid var(--gold); padding:10px 14px; border-radius:10px; max-width:380px; font-size:13px; box-shadow:var(--shadow); }
+  #toast div.ok { border-left-color:var(--up); } #toast div.err { border-left-color:var(--dn); }
+  .foot { font-size:12px; color:var(--dim); padding:6px 0 0; }
+  .prog { height:8px; border-radius:4px; background:#1b2333; overflow:hidden; margin:8px 0 4px; } .prog i { display:block; height:100%; background:var(--blue); transition:width .8s linear; }
+  .ofhud { display:flex; gap:10px; flex-wrap:wrap; padding:12px 16px; border-bottom:1px solid var(--line2); }
+  .ofk { background:var(--surface2); border:1px solid var(--line); border-radius:12px; padding:7px 14px; min-width:150px; display:flex; flex-direction:column; gap:2px; } .ofk.wide { flex:1; min-width:240px; }
+  .ofk span { font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--mut); } .ofk b { font-size:19px; }
+  .ofbar { height:8px; background:#1b2333; border-radius:6px; overflow:hidden; } .ofbar i { display:block; height:100%; background:linear-gradient(90deg,#e8b64c,#2ebd85); border-radius:6px; transition:width .6s; }
+  #ofCanvas { display:block; width:100%; height:auto; background:#080b11; }
+  .vrep { position:absolute; top:10px; right:10px; width:min(340px,calc(100% - 20px)); max-height:calc(100% - 20px); overflow:auto; background:rgba(12,17,27,.96); border:1px solid var(--line); border-radius:14px; padding:14px 16px 12px; box-shadow:0 10px 30px rgba(0,0,0,.5); font-size:13px; line-height:1.45; }
+  .vrep h4 { margin:0 26px 6px 0; font-size:15px; } .vrep h4 small { display:block; font-weight:600; color:var(--mut); font-size:12px; margin-top:2px; }
+  .vrep .vx { position:absolute; top:8px; right:8px; border:0; background:transparent; color:var(--mut); font-size:18px; cursor:pointer; padding:4px 8px; border-radius:8px; } .vrep .vx:hover { background:var(--surface2); color:var(--txt); }
+  .vrep .vrow { display:flex; justify-content:space-between; gap:12px; padding:5px 0; border-bottom:1px solid var(--line2); } .vrep .vrow span { color:var(--mut); } .vrep .vrow b { text-align:right; overflow-wrap:anywhere; }
+  .vrep .vdet { background:var(--surface2); border-radius:10px; padding:8px 10px; margin:6px 0; font-size:12.5px; overflow-wrap:anywhere; } .vrep ul { margin:4px 0 8px 18px; padding:0; }
+  .vrep p { margin:4px 0 8px; } .vchips { display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; }
+  .vc { font-size:11px; font-weight:700; padding:2px 7px; border-radius:999px; background:#2a3446; color:#cfd6e4; } .vc.u { background:#14513a; color:#bff5de; } .vc.d { background:#5c1e29; color:#ffd0d7; } .vc.me { outline:2px solid #fff; }
+  .ofticker { background:#05080d; border-top:1px solid var(--line2); padding:8px 16px; font:600 12.5px/1.4 var(--font); color:#8fb3a0; letter-spacing:.04em; overflow-wrap:anywhere; }
+  @media print { .topbar,.tabs,.filters,.btn,#toast { display:none !important; } body { background:#fff; color:#000; } .card { box-shadow:none; border-color:#ccc; background:#fff; } .page { display:block !important; } .page:not(.printable) { display:none !important; } }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <button type="button" class="menubtn" id="menuBtn" aria-label="Abrir menu das seções" aria-expanded="false" aria-controls="tabs"><span class="bars" aria-hidden="true">☰</span><span>Menu</span></button>
+  <div><h1>◈ Kairos</h1><div class="sub">Robô de ouro e bitcoin · MetaTrader 5 · validação na demo</div></div><div class="filters" id="fSym" title="Escolha o robô que o painel mostra"></div>
+  <span class="spacer"></span>
+  <span id="acct" class="pill">--</span>
+  <span id="alive" class="pill"><i></i><em style="font-style:normal">verificando…</em></span>
+  <div class="ctl" id="ctl">
+    <button class="btn gold" id="bPause" title="Pausa: o robô para de abrir novas operações (posições abertas seguem com stop e alvo)">⏸ Pausar</button>
+    <button class="btn red" id="bClose" title="Fecha a mercado todas as posições abertas do robô">Fechar tudo</button>
+    <button class="btn red" id="bStop" title="Remove o robô do gráfico do MT5. Para ligar de novo é preciso anexá-lo no MT5.">Desligar</button>
+  </div>
+</header>
+<nav class="tabs" id="tabs" aria-label="Seções do painel">
+  <div class="navhead"><span>◈ Kairos · seções</span><span aria-hidden="true">Esc fecha</span></div>
+  <button type="button" class="tabbtn" data-tab="office"><span class="ic" aria-hidden="true">🏘️</span><span>Vila</span></button>
+  <button type="button" class="tabbtn" data-tab="over"><span class="ic" aria-hidden="true">📊</span><span>Hoje</span></button>
+  <button type="button" class="tabbtn" data-tab="diary"><span class="ic" aria-hidden="true">📓</span><span>Diário</span></button>
+  <button type="button" class="tabbtn" data-tab="dec"><span class="ic" aria-hidden="true">🧠</span><span>Decisões</span></button>
+  <button type="button" class="tabbtn" data-tab="valid"><span class="ic" aria-hidden="true">🧪</span><span>Validação</span></button>
+  <button type="button" class="tabbtn" data-tab="trades"><span class="ic" aria-hidden="true">🧾</span><span>Operações</span></button>
+  <button type="button" class="tabbtn" data-tab="charts"><span class="ic" aria-hidden="true">📈</span><span>Gráficos</span></button>
+  <button type="button" class="tabbtn" data-tab="news"><span class="ic" aria-hidden="true">📰</span><span>Notícias</span></button>
+  <button type="button" class="tabbtn" data-tab="act"><span class="ic" aria-hidden="true">⚡</span><span>Atividade</span></button>
+  <button type="button" class="tabbtn" data-tab="cfg"><span class="ic" aria-hidden="true">⚙️</span><span>Configuração</span></button>
+</nav>
+<div id="scrim"></div>
+
+<main>
+  <div id="banReal" class="banner red"></div><div id="banWarn" class="banner gold"></div><div id="banPause" class="banner blue"></div><div id="banStale" class="banner gold"></div>
+  <div id="empty" class="card" style="display:none"><div class="card-b"><div class="empty"><b style="color:var(--txt);font-size:15px">O robô ainda não enviou dados.</b><br>
+    No MetaTrader 5: abra o gráfico do ativo (<b>XAUUSDm</b> ou <b>BTCUSDm</b>) no tempo gráfico desejado, arraste o <b>Kairos</b> (Navegador → Expert Advisors) para o gráfico e ligue o botão <b>Algo Trading</b>.</div></div></div>
+
+  <section class="page on" id="p-office">
+    <div class="card"><div class="card-b" style="padding:0">
+      <div class="ofhud"><div id="ofEq" class="ofk"></div><div id="ofDay" class="ofk"></div><div id="ofGoal" class="ofk wide"></div><div id="ofTk" class="ofk"></div><button type="button" class="btn" id="ofZin" title="Aproximar (ou Ctrl + roda do mouse)" aria-label="Aproximar">🔍＋</button><button type="button" class="btn" id="ofZout" title="Afastar" aria-label="Afastar">🔍－</button><button type="button" class="btn" id="ofZre" title="Ver tudo (ou duplo clique)" aria-label="Ver a vila inteira">⟲</button><button type="button" class="btn" id="ofLbl" aria-pressed="true" style="align-self:center">🏷️ Rótulos: ligados</button></div>
+      <div style="position:relative"><canvas id="ofCanvas" width="1880" height="940" role="img" aria-label="Vila do Kairos: carregando…"></canvas><div id="vilaRep" class="vrep" role="dialog" aria-label="Relatório do morador" style="display:none"></div></div>
+      <div id="ofTicker" class="ofticker">carregando a vila…</div>
+      <div class="s mut" style="padding:8px 16px 12px;font-size:12px">Casa do Ouro e Casa do Bitcoin: cada analista é um indicador (tela verde concorda, vermelha discorda, cinza sem opinião) e cada posição aberta tem um trader no andar de cima. Na Casa Central ficam macro, notícias, risco e cérebro. Quem está neutro levanta e passeia pela vila; quem fechou operação hoje passeia: takes na Praça dos Takes, stops no Cantinho do Stop. Clique em qualquer bonequinho para abrir o relatório dele.</div>
+    </div></div>
+  </section>
+
+  <section class="page" id="p-over">
+    <div class="card" id="targetCard" style="margin-bottom:14px"><div class="card-b">
+      <div class="row" style="flex-wrap:wrap;gap:14px;align-items:center">
+        <div style="flex:1;min-width:260px"><div class="mut" style="font-size:12px;letter-spacing:.06em;text-transform:uppercase">🎯 Meta de ganho do dia</div>
+          <div id="tgText" style="font-size:20px;font-weight:700;margin-top:2px">--</div><div class="meter"><i id="tgBar" style="width:0%"></i></div><div class="s mut" id="tgHint" style="margin-top:6px;font-size:12.5px"></div></div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="mut">Hoje quero ganhar US$</span><input id="tgInput" type="number" min="0" step="10" placeholder="ex.: 150" style="width:110px;background:var(--surface2);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 10px;font:inherit">
+          <button class="btn gold" id="tgSet">Definir meta</button><button class="btn" id="tgClear">Sem meta</button><button class="btn" id="bResetPeak" title="Zera a base da trava de queda máxima: o pico passa a ser o equity de agora e a trava é liberada">↺ Reiniciar base da queda</button></div></div>
+      <div class="mut" style="font-size:12px;margin-top:8px">O robô entra quantas vezes for preciso, sem limite de operações, até o ganho do dia (equity de agora menos o de 00:00 UTC, somando ouro e bitcoin) chegar à meta. Aí ele fecha as posições e para até amanhã. <b>Ele não aumenta o risco nem relaxa os critérios para alcançar a meta</b>: se o mercado não oferecer boas entradas, o dia termina sem ela.</div>
+    </div></div>
+    <div class="grid kpis" id="robotsRow"></div>
+    <div class="grid kpis" id="kpis"></div>
+    <div class="grid two"><div class="card"><div class="card-h"><h2>Posição aberta</h2></div><div class="card-b" id="position"></div></div>
+      <div class="card"><div class="card-h"><h2>O que o robô está decidindo agora</h2><span class="r" id="lastAge"></span></div><div class="card-b" id="now"></div></div></div>
+    <div class="grid two"><div class="card"><div class="card-h"><h2>Hierarquia de análise (Dow)</h2><span class="r" id="hierNote"></span></div><div class="card-b" id="hier"></div></div>
+      <div class="card"><div class="card-h"><h2>Saúde e travas</h2></div><div class="card-b"><div class="check" id="health"></div></div></div></div>
+    <div class="card"><div class="card-h"><h2>Últimas decisões</h2><span class="r"><a href="#" data-go="dec">ver todas →</a></span></div><div class="card-b" id="recentDec"></div></div>
+  </section>
+
+  <section class="page" id="p-dec">
+    <div class="card"><div class="card-h"><h2>Por que o robô entra ou não entra</h2><div class="filters" id="fDec" style="margin-left:auto"><button data-f="all" class="on">Todas</button><button data-f="ENTROU">Entrou</button><button data-f="NAO_ENTROU">Não entrou</button><button data-f="EM_VERIFICACAO">Em verificação</button></div></div>
+      <div class="card-b"><div class="mut" style="font-size:12.5px;margin-bottom:10px">Cada decisão passa por duas etapas: <b>1) análise</b> (setup, placar de indicadores com confluência mínima, notícias, travas) e <b>2) verificação ao vivo</b> no preço de mercado. A "certeza" é a <b>confluência</b>: a porcentagem dos indicadores com opinião que concordam com a operação (hierarquia de Dow, estrutura, médias, RSI, MACD, VWAP, volume, volatilidade, padrão de vela, sentimento). <b>Não é a probabilidade de ganhar</b>.</div>
+        <div id="decList"></div></div></div>
+    <div class="grid two" style="margin-top:14px"><div class="card"><div class="card-h"><h2>Verificações que mais barram operações</h2></div><div class="card-b" id="failBars"></div></div>
+      <div class="card"><div class="card-h"><h2>Funil de decisões</h2></div><div class="card-b" id="funnel"></div></div></div>
+  </section>
+
+  <section class="page printable" id="p-trades">
+    <div class="card"><div class="card-h"><h2>Relatório de operações</h2>
+      <div class="filters" id="fRange" style="margin-left:auto"><button data-r="7">7 dias</button><button data-r="30">30 dias</button><button data-r="0" class="on">Tudo</button></div>
+      <button class="btn small" id="bCsv">⬇ CSV</button><button class="btn small" id="bPrint">🖨 Imprimir</button></div>
+      <div class="card-b"><div class="grid kpis" id="tKpis" style="margin-bottom:8px"></div><div id="tVerdict"></div>
+        <div class="scroll"><table class="tbl" id="tTable"></table></div><div class="foot">Clique numa linha para ver por que o robô entrou. R = resultado dividido pelo risco planejado (1R = o que se arriscava naquela operação).</div></div></div>
+  </section>
+
+  <section class="page" id="p-valid">
+    <div class="banner show gold" id="vBan" style="margin-bottom:12px"></div>
+    <div class="grid kpis" id="vKpis"></div>
+    <div class="grid two">
+      <div class="card"><div class="card-h"><h2>Critérios para levar à conta real (definidos antes dos resultados)</h2></div><div class="card-b" id="vCrit"></div></div>
+      <div class="card"><div class="card-h"><h2>Trades da validação</h2></div><div class="card-b" id="vTrades"></div></div></div>
+    <div class="card"><div class="card-h"><h2>O que o Testador de Estratégia mostrou (histórico do ouro)</h2><span class="r" id="vBtNote"></span></div><div class="card-b"><div class="scroll"><table class="tbl" id="vBt"></table></div>
+      <div class="foot">R/op = resultado médio por operação em múltiplos do risco, com intervalo de confiança de 95%. O Testador usa candles de 1 minuto e não tem calendário de notícias: é uma aproximação. Variações testadas: 5 (mais variações, maior a chance de uma parecer boa por sorte).</div></div></div>
+  </section>
+
+  <section class="page" id="p-diary">
+    <div class="grid kpis" id="dKpis"></div>
+    <div class="grid two"><div class="card"><div class="card-h"><h2>Curva de R acumulado</h2></div><div class="card-b"><div id="dCurve"></div></div></div>
+      <div class="card"><div class="card-h"><h2>O que o robô está aprendendo</h2></div><div class="card-b" id="dLearn"></div></div></div>
+    <div class="card"><div class="card-h"><h2>Trades, um a um</h2><div class="filters" id="fDiaryA" style="margin-left:auto"></div><div class="filters" id="fDiary" style="margin-left:8px"><button data-f="all" class="on">Todos</button><button data-f="win">Takes</button><button data-f="loss">Loss</button></div></div>
+      <div class="card-b"><div class="mut" style="font-size:12.5px;margin-bottom:10px">Cada cartão mostra o gráfico do trade (passe o mouse nos candles), por que o robô entrou e por que deu take ou loss. As causas são <b>hipóteses</b> da autópsia automática; só viram regra com 30 ou mais trades. As notas também vão para o Obsidian (pasta 08 Trades).</div>
+        <div id="dList"></div></div></div>
+  </section>
+
+  <section class="page" id="p-charts">
+    <div class="row" style="margin-bottom:10px"><div class="filters" id="fRange2"><button data-r="7">7 dias</button><button data-r="30">30 dias</button><button data-r="0" class="on">Tudo</button></div><span class="mut" style="font-size:12px">passe o mouse sobre os gráficos para ver os valores</span></div>
+    <div class="grid two"><div class="card"><div class="card-h"><h2>Resultado acumulado</h2><div class="filters" id="fEq" style="margin-left:auto"><button data-u="r" class="on">em R</button><button data-u="usd">em US$</button></div></div><div class="card-b"><div id="cEq" class="chart"></div></div></div>
+      <div class="card"><div class="card-h"><h2>Resultado por dia (US$)</h2></div><div class="card-b"><div id="cDay" class="chart"></div></div></div></div>
+    <div class="grid two"><div class="card"><div class="card-h"><h2>Distribuição dos resultados (R)</h2></div><div class="card-b" id="cHist"></div></div>
+      <div class="card"><div class="card-h"><h2>Resultado por hora de abertura (UTC)</h2></div><div class="card-b" id="cHour"></div></div></div>
+    <div class="grid two"><div class="card"><div class="card-h"><h2>Por tipo de entrada e por lado</h2></div><div class="card-b" id="cSetup"></div></div>
+      <div class="card"><div class="card-h"><h2>Por confirmação (com e sem)</h2></div><div class="card-b" id="cConf"></div></div></div>
+  </section>
+
+  <section class="page" id="p-news">
+    <div class="grid two"><div class="card"><div class="card-h"><h2>Sentimento das manchetes</h2><span class="r" id="newsAge"></span></div><div class="card-b" id="sent"></div></div>
+      <div class="card"><div class="card-h"><h2>Calendário econômico (alto impacto, USD)</h2></div><div class="card-b" id="cal"></div></div></div>
+    <div class="card"><div class="card-h"><h2>Manchetes que mais pesaram</h2></div><div class="card-b" id="heads"></div></div>
+    <div class="foot">O sentimento é uma leitura por palavras-chave, sem histórico para provar que ajuda a prever preço: serve só como veto de segurança. O calendário vem do próprio MetaTrader 5.</div>
+  </section>
+
+  <section class="page" id="p-act">
+    <div class="card"><div class="card-h"><h2>Relatório de atividades</h2><div class="filters" id="fAct" style="margin-left:auto"><button data-f="all" class="on">Tudo</button><button data-f="dec">Decisões</button><button data-f="trades">Operações</button><button data-f="cmd">Comandos</button><button data-f="guards">Travas e início</button></div></div><div class="card-b feed" id="feed"></div></div>
+  </section>
+
+  <section class="page" id="p-cfg">
+    <div class="grid two" id="cfg"></div>
+  </section>
+  <p class="foot" id="foot"></p>
+</main>
+<div id="toast" aria-live="polite"></div><div class="tip" id="tip"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = x => String(x ?? '').replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+const f2 = n => n == null || isNaN(n) ? '--' : Number(n).toLocaleString('pt-BR', { minimumFractionDigits:2, maximumFractionDigits:2 });
+const sg = (v, d = 2) => (v > 0 ? '+' : '') + Number(v).toLocaleString('pt-BR', { minimumFractionDigits:d, maximumFractionDigits:d });
+const cl = v => v > 0 ? 'buy' : v < 0 ? 'sell' : 'mut';
+const epoch = t => Math.floor(Date.parse(String(t).replace(/\./g, '-').replace(' ', 'T') + 'Z') / 1000);
+const store = { get:k => { try { return localStorage.getItem(k); } catch { return null; } }, set:(k, v) => { try { localStorage.setItem(k, v); } catch {} } };
+let ROBOTS = [], SYM = store.get('rsym') || 'XAUUSDm', D = null, NEWS = null, tab = (location.hash.slice(1) || 'office'), range = 0, decF = 'all', actF = 'all', eqUnit = 'r';
+const charts = {};
+
+/* ---------- utilitários ---------- */
+function toast(msg, kind = '') { const d = document.createElement('div'); d.className = kind; d.textContent = msg; $('toast').appendChild(d); setTimeout(() => d.remove(), 7000); }
+const tip = $('tip');
+function showTip(e, html) { tip.innerHTML = html; tip.style.display = 'block'; tip.style.left = Math.min(e.clientX + 14, innerWidth - 230) + 'px'; tip.style.top = (e.clientY + 14) + 'px'; }
+document.addEventListener('mousemove', e => { if (tip.style.display === 'block' && e.target.closest && !e.target.closest('[data-tip]')) tip.style.display = 'none'; });
+function meter(pct, warnAt = 50, badAt = 80) { const p = Math.max(0, Math.min(100, pct)); return `<div class="meter"><i class="${p >= badAt ? 'hi' : p >= warnAt ? 'mid' : ''}" style="width:${p}%"></i></div>`; }
+const chips = (ok, no) => `<div class="chips">${(ok || []).map(n => `<span class="chip ok">✓ ${esc(n)}</span>`).join('')}${(no || []).map(n => `<span class="chip no">${esc(n)}</span>`).join('')}</div>`;
+function ring(pct, color) { const c = 2 * Math.PI * 15, off = c * (1 - Math.max(0, Math.min(100, pct)) / 100); return `<svg class="ring" viewBox="0 0 38 38"><circle cx="19" cy="19" r="15" fill="none" stroke="#1b2333" stroke-width="4"/><circle cx="19" cy="19" r="15" fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${off}" transform="rotate(-90 19 19)"/><text x="19" y="23" text-anchor="middle" font-size="10.5" font-weight="700" fill="#e8edf5">${pct}</text></svg>`; }
+function gauge(score) { const a = -90 + (score + 100) / 200 * 180; return `<svg viewBox="0 0 220 124" style="width:100%;max-width:260px;display:block;margin:0 auto"><defs><linearGradient id="gg" x1="20" y1="0" x2="200" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#f6465d"/><stop offset=".5" stop-color="#8a96a8"/><stop offset="1" stop-color="#2ebd85"/></linearGradient></defs><path d="M20 110 A90 90 0 0 1 200 110" fill="none" stroke="#1b2333" stroke-width="14" stroke-linecap="round"/><path d="M20 110 A90 90 0 0 1 200 110" fill="none" stroke="url(#gg)" stroke-width="14" stroke-linecap="round" opacity=".92"/><g style="transform:rotate(${a}deg);transform-origin:110px 110px"><path d="M110 110 L110 38" stroke="#e8edf5" stroke-width="3" stroke-linecap="round"/><circle cx="110" cy="110" r="8" fill="#e8edf5"/><circle cx="110" cy="110" r="3" fill="#121824"/></g></svg>`; }
+function inRange(t) { if (!range) return true; const e = epoch(t); return e && (Date.now() / 1000 - e) <= range * 86400; }
+
+/* ---------- controle do robô ---------- */
+async function cmd(name, confirmFlag, extra) {
+  try {
+    const r = await fetch('/api/robot/command', { method:'POST', headers:{ 'Content-Type':'application/json', 'X-XAUR':'1' }, body:JSON.stringify({ cmd:name, confirm:!!confirmFlag, sym:SYM, ...(extra || {}) }) });
+    const d = await r.json(); if (!r.ok) throw new Error(d.error || 'falha');
+    toast('Comando enviado ao robô. Aguardando confirmação…');
+    const t0 = Date.now();
+    const poll = setInterval(async () => {
+      await tick(true); const c = D && D.status && D.status.control;
+      if (c && Number(c.last_id) >= d.id) { clearInterval(poll); toast('Robô respondeu: ' + (c.result || c.last_cmd), 'ok'); }
+      else if (Date.now() - t0 > 20000) { clearInterval(poll); toast('O robô não respondeu em 20 s. O MT5 está aberto e o robô ativo?', 'err'); }
+    }, 2000);
+  } catch (e) { toast('Não foi possível enviar: ' + e.message, 'err'); }
+}
+$('bPause').onclick = () => { const p = D && D.status && D.status.control && D.status.control.paused; cmd(p ? 'resume' : 'pause'); };
+$('bClose').onclick = () => { if (confirm('Fechar a mercado TODAS as posições abertas do robô agora?')) cmd('close_all', true); };
+$('bStop').onclick = () => { if (confirm('Desligar o robô?\n\nEle será REMOVIDO do gráfico do MT5. As posições abertas continuam com stop e alvo. Para ligar de novo você precisa anexar o robô manualmente no MT5.') && confirm('Confirma remover o robô do gráfico?')) cmd('stop', true); };
+
+/* ---------- abas ---------- */
+function showTab(t) { if (!$('p-' + t)) t = 'office'; if (t !== 'office' && window.Office) Office.stop(); tab = t; store.set('rtab', t); document.body.classList.toggle('is-office', t === 'office'); try { history.replaceState(null, '', t === 'office' ? location.pathname : '#' + t); } catch {} document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t)); document.querySelectorAll('.page').forEach(p => p.classList.toggle('on', p.id === 'p-' + t)); if (D) renderTab(); }
+function setMenu(open) { $('tabs').classList.toggle('open', open); $('scrim').classList.toggle('open', open); $('menuBtn').setAttribute('aria-expanded', String(open)); $('menuBtn').setAttribute('aria-label', open ? 'Fechar menu das seções' : 'Abrir menu das seções'); if (open) { const on = document.querySelector('#tabs .tabbtn.on') || document.querySelector('#tabs .tabbtn'); if (on) on.focus(); } else $('menuBtn').focus({ preventScroll: true }); }
+$('menuBtn').onclick = () => setMenu(!$('tabs').classList.contains('open'));
+$('scrim').onclick = () => setMenu(false);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('tabs').classList.contains('open')) setMenu(false); });
+$('tabs').addEventListener('click', e => { const b = e.target.closest('.tabbtn'); if (b) { showTab(b.dataset.tab); setMenu(false); } });
+window.addEventListener('hashchange', () => showTab(location.hash.slice(1) || 'office'));
+document.addEventListener('click', e => { const a = e.target.closest('[data-go]'); if (a) { e.preventDefault(); showTab(a.dataset.go); } });
+function bindFilter(id, attr, fn) { $(id).addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; document.querySelectorAll('#' + id + ' button').forEach(x => x.classList.toggle('on', x === b)); fn(b.dataset[attr]); }); }
+bindFilter('fDec', 'f', v => { decF = v; renderDecisions(); });
+bindFilter('fAct', 'f', v => { actF = v; renderActivity(); });
+bindFilter('fRange', 'r', v => { range = +v; syncRange(); renderTab(); });
+bindFilter('fRange2', 'r', v => { range = +v; syncRange(); renderTab(); });
+bindFilter('fEq', 'u', v => { eqUnit = v; renderCharts(); });
+function syncRange() { ['fRange', 'fRange2'].forEach(id => document.querySelectorAll('#' + id + ' button').forEach(b => b.classList.toggle('on', +b.dataset.r === range))); }
+$('bCsv').onclick = () => { location.href = '/api/robot/trades.csv'; };
+$('bPrint').onclick = () => { showTab('trades'); setTimeout(() => print(), 200); };
+
+/* ---------- renderização ---------- */
+function render() {
+  const S = D.status, J = D.journal, found = S.found && !S.error;
+  $('empty').style.display = (!found && !J.found) ? 'block' : 'none';
+  document.querySelector('main').classList.toggle('nodata', !found && !J.found);
+  document.querySelectorAll('.page, .tabs').forEach(p => p.style.display = (!found && !J.found) ? 'none' : '');
+  if (!found && !J.found) { $('alive').className = 'pill'; $('alive').innerHTML = '<i></i>sem dados do robô'; return; }
+  const alive = $('alive'), ctl = found && S.control || {};
+  if (!found) { alive.className = 'pill'; alive.innerHTML = '<i></i>sem estado do robô'; }
+  else if (!S.alive) { alive.className = 'pill bad'; alive.innerHTML = `<i></i>robô parado (há ${S.stale_for || Math.round((S.age_s || 0) / 60) + ' min'})`; }
+  else if (ctl.paused) { alive.className = 'pill pause'; alive.innerHTML = '<i></i>robô pausado'; }
+  else { alive.className = 'pill ok'; alive.innerHTML = '<i></i>robô ativo'; }
+  const mode = found ? S.account.mode : null;
+  $('acct').className = 'pill ' + (mode === 'REAL' ? 'real' : mode === 'DEMO' ? 'demo' : '');
+  $('acct').textContent = found ? `Conta ${mode} · ${S.symbol} ${(S.tf || '').replace('PERIOD_', '')}` : 'Conta --';
+  $('acct').title = found ? S.account.server : '';
+  $('banReal').className = 'banner red' + (mode === 'REAL' ? ' show' : ''); $('banReal').innerHTML = '<b>Atenção: o robô está numa conta REAL.</b> Perdas aqui são dinheiro de verdade.';
+  const warns = [];
+  if (found && S.tester) warns.push('Estes dados vêm do Testador de Estratégia, não de uma conta ao vivo.');
+  if (found && !S.algo_allowed) warns.push('<b>Algo Trading está desligado</b> no MT5: o robô não consegue abrir ordens.');
+  if (found && S.news && S.news.blackout) warns.push('<b>Bloqueio de notícia:</b> ' + esc(S.news.blackout_why) + '. O robô não abre operações nesta janela.');
+  $('banWarn').className = 'banner gold' + (warns.length ? ' show' : ''); $('banWarn').innerHTML = warns.join('<br>');
+  $('banStale').className = 'banner gold' + (found && S.stale ? ' show' : '');
+  $('banStale').innerHTML = found && S.stale ? `<b>Robô do ${esc(D.asset || '')} parado há ${esc(S.stale_for || '')}.</b> Os números de HOJE abaixo vêm do diário (sem decisões novas) e a conta${S.account_from ? ' vem do robô ' + esc(S.account_from) : ' é a do último registro'}. Para voltar a operar, anexe o Kairos ao gráfico no MT5.` : '';
+  $('banPause').className = 'banner blue' + (found && ctl.paused ? ' show' : ''); $('banPause').innerHTML = '<b>Robô pausado pelo painel.</b> Ele não abre novas operações; posições abertas seguem com stop e alvo. Clique em "Retomar" para voltar a operar.';
+  const can = found && S.alive && ctl.allowed !== false;
+  $('bPause').textContent = ctl.paused ? '▶ Retomar' : '⏸ Pausar'; ['bPause', 'bClose', 'bStop'].forEach(id => { $(id).disabled = !can; $(id).title = can ? $(id).title : 'Disponível com o robô ativo e o controle pelo painel permitido'; });
+  renderTarget();
+  renderTab();
+  $('foot').textContent = 'Lendo: ' + D.files_dir + ' · atualiza a cada 5 s · este painel só envia comandos quando você clica nos botões do topo';
+}
+function renderTarget() {
+  const S = D.status || {}, T = S.target;
+  if (!T) { $('tgText').textContent = 'o robô ainda não informa a meta (reanexe a versão nova no MT5)'; $('tgBar').style.width = '0%'; return; }
+  const gain = T.gain || 0, usd = T.usd || 0, pct = usd > 0 ? Math.max(0, Math.min(100, 100 * gain / usd)) : 0;
+  $('tgText').innerHTML = usd > 0 ? `Ganho de hoje: <span class="${cl(gain)}">US$ ${sg(gain)}</span> de US$ ${f2(usd)} <span class="mut" style="font-size:14px">(${pct.toFixed(0)}%)</span>` : `Ganho de hoje: <span class="${cl(gain)}">US$ ${sg(gain)}</span> <span class="mut" style="font-size:14px">(sem meta definida)</span>`;
+  const b = $('tgBar'); b.style.width = pct + '%'; b.className = T.hit ? '' : (pct < 50 ? 'mid' : '');
+  $('tgHint').textContent = !usd ? 'Defina a meta ao lado: o robô passa a perseguir esse ganho hoje.' : T.hit ? '✅ META ATINGIDA: ' + (T.action === 1 ? 'posições fechadas, o robô fica parado até amanhã (00:00 UTC).' : 'sem novas entradas até amanhã.') : 'Buscando a meta: o robô continua operando normalmente (mesmo risco por operação).';
+}
+$('tgSet').onclick = () => { const v = parseFloat($('tgInput').value); if (!(v > 0)) { toast('Digite um valor maior que zero em US$.', 'err'); return; } cmd('target', false, { value:v, sym:'all' }); };
+$('tgClear').onclick = () => cmd('target', false, { value:0, sym:'all' });
+$('bResetPeak').onclick = () => { if (confirm('Reiniciar a base da queda máxima? O pico passa a ser o equity de agora e a trava de drawdown é liberada nos dois robôs.')) cmd('reset_peak', false, { sym:'all' }); };
+function renderTab() { ({ office:() => { if (window.Office) Office.start(); }, valid:renderValid, diary:renderDiary, over:renderOverview, dec:renderDecisions, trades:renderTrades, charts:renderCharts, news:renderNews, act:renderActivity, cfg:renderConfig })[tab](); }
+
+function decCard(e, compact) {
+  const d = e.decision; if (!d) return '';
+  const label = { ENTROU:'ENTROU', NAO_ENTROU:'NÃO ENTROU', EM_VERIFICACAO:'EM VERIFICAÇÃO' }[d.result] || d.result;
+  const bcls = { ENTROU:d.side === 'VENDA' ? 'sell' : 'buy', NAO_ENTROU:'sell', EM_VERIFICACAO:'blue' }[d.result] || '';
+  const col = d.result === 'ENTROU' ? '#2ebd85' : d.result === 'NAO_ENTROU' ? '#f6465d' : '#5b9dff';
+  const cks = (d.checks || []).map(c => `<span class="chip ${c.status === 'ok' ? 'ok' : c.status === 'FALHOU' ? 'bad' : c.status === 'neutro' ? '' : 'warn'}" title="${esc(c.detail)}">${c.status === 'ok' ? '✓' : c.status === 'FALHOU' ? '✗' : c.status === 'neutro' ? '○' : '✗'} ${esc(c.name)}</span>`).join('');
+  const detail = compact ? '' : (d.checks || []).map(c => `<div style="font-size:12px;color:var(--mut)"><b class="${c.status === 'ok' ? 'buy' : c.status === 'FALHOU' ? 'sell' : c.status === 'neutro' ? 'mut' : 'warn'}">${c.status === 'ok' ? '✓' : c.status === 'FALHOU' ? '✗' : c.status === 'neutro' ? '○' : '✗'}</b> <span style="color:var(--txt)">${esc(c.name)}</span>: ${esc(c.detail)}</div>`).join('');
+  return `<div class="dec ${d.result}"><div class="top">${d.certainty != null ? ring(d.certainty, col) : ''}<span class="badge ${bcls}">${label}</span><b class="${d.side === 'COMPRA' ? 'buy' : 'sell'}">${esc(d.side || '')}</b><b>${esc(d.setup || '')}</b><span class="mut">etapa ${d.stage || '?'}</span><span class="t">${esc(e.t)}</span></div>
+    <div class="sum">${esc(d.summary)}</div><div class="chips">${cks}</div>${detail ? `<details style="margin-top:8px"><summary class="mut" style="cursor:pointer;font-size:12px">ver cada verificação</summary><div style="margin-top:6px;display:grid;gap:3px">${detail}</div></details>` : ''}</div>`;
+}
+
+function renderOverview() {
+  const S = D.status, J = D.journal, found = S.found && !S.error;
+  if (!found) { $('kpis').innerHTML = ''; ['position', 'now', 'hier', 'health'].forEach(i => $(i).innerHTML = '<div class="empty">Sem estado do robô.</div>'); $('recentDec').innerHTML = (J.events || []).filter(e => e.decision).slice(0, 4).map(e => decCard(e, true)).join('') || '<div class="empty">Sem decisões ainda.</div>'; return; }
+  const g = S.guards, L = S.limits, A = S.account, P = S.position, lossPct = Math.max(0, g.day_loss_pct), ddPct = Math.max(0, g.drawdown_pct), mode = A.mode, ctl = S.control || {};
+  $('kpis').innerHTML = `
+    <div class="card kpi"><div class="l">Equity</div><div class="v">${f2(A.equity)} <span class="mut" style="font-size:13px">${esc(A.currency)}</span></div><div class="s">saldo ${f2(A.balance)} · margem livre ${f2(A.margin_free)}</div></div>
+    <div class="card kpi"><div class="l">Resultado de hoje (${esc((D.dia || '').slice(8, 10) + '/' + (D.dia || '').slice(5, 7))})</div><div class="v ${cl(g.pnl_today)}">${sg(g.pnl_today)}</div><div class="s">${g.trades_today} entrada(s) hoje · o dia reinicia às 00:00 (relógio do PC)</div></div>
+    <div class="card kpi"><div class="l">Perda do dia vs limite (${L.max_daily_loss_pct}%)</div><div class="v ${lossPct >= L.max_daily_loss_pct ? 'sell' : ''}">${lossPct.toFixed(2)}%</div>${meter(lossPct / L.max_daily_loss_pct * 100)}<div class="s">início do dia: ${f2(g.day_start_equity)}</div></div>
+    <div class="card kpi"><div class="l">Queda desde o pico vs limite (${L.max_drawdown_pct}%)</div><div class="v ${ddPct >= L.max_drawdown_pct ? 'sell' : ''}">${ddPct.toFixed(2)}%</div>${meter(ddPct / L.max_drawdown_pct * 100)}<div class="s">pico: ${f2(g.peak_equity)}</div></div>
+    <div class="card kpi"><div class="l">Perdas seguidas hoje</div><div class="v ${g.consec_losses >= L.max_consec_losses ? 'sell' : ''}">${g.consec_losses} <span class="mut" style="font-size:13px">de ${L.max_consec_losses}</span></div>${meter(g.consec_losses / L.max_consec_losses * 100, 60, 99)}</div>`;
+
+  if (P && P.open) {
+    const opened = (J.events || []).find(e => e.ev === 'ABRIU'), risk = opened && opened.risk ? opened.risk : null, why = (J.events || []).find(e => e.decision && e.decision.result === 'ENTROU');
+    const buy = P.side === 'COMPRA', px = S.market ? (buy ? S.market.bid : S.market.ask) : P.price_open, span = Math.abs(P.tp - P.sl) || 1, pos = Math.max(0, Math.min(100, buy ? (px - P.sl) / span * 100 : (P.sl - px) / span * 100));
+    $('position').innerHTML = `<div class="row"><b class="${buy ? 'buy' : 'sell'}" style="font-size:16px">${buy ? '▲ COMPRA' : '▼ VENDA'} ${f2(P.lots)} lote</b><span class="${cl(P.profit)}" style="font-size:20px;font-weight:700">${sg(P.profit)}${risk ? ` <span class="mut" style="font-size:13px">(${sg(P.profit / risk)} R)</span>` : ''}</span></div>
+      <div class="ladder"><div class="m" style="left:${pos}%"></div></div><div class="lvls"><div><b>${f2(P.sl)}</b>invalidação (stop)</div><div><b>${f2(P.price_open)}</b>entrada · agora ${f2(px)}</div><div><b>${f2(P.tp)}</b>alvo</div></div>
+      <div class="mut" style="font-size:12px;margin-top:8px">aberta em ${esc(P.open_time)} (servidor) · ${esc(P.comment)}</div>${why ? `<div style="margin-top:8px;font-size:13px"><b>Por que entrou:</b> ${esc(why.decision.summary)}</div>` : ''}`;
+  } else $('position').innerHTML = '<div class="empty">Nenhuma posição aberta.<br><span style="font-size:12px">O robô espera um sinal aprovado nas duas etapas.</span></div>';
+
+  const pend = S.pending || {}, dc = S.decision || {}, ls = S.last_signal || {};
+  $('lastAge').textContent = `estado atualizado há ${S.age_s}s`;
+  let nowHtml = '';
+  if (pend.active) nowHtml += `<div class="row"><b class="blue">Etapa 2: verificando ao vivo</b><span class="mut">${esc(pend.side)} · ${esc(pend.setup)} · certeza ${pend.certainty}%</span></div><div class="prog"><i style="width:${Math.min(100, pend.elapsed / Math.max(1, pend.needed) * 100)}%"></i></div><div class="mut" style="font-size:12px">${pend.elapsed} de ${pend.needed} segundos com o sinal se sustentando no preço de mercado</div>`;
+  nowHtml += `<div style="margin-top:${pend.active ? 12 : 0}px;font-size:14px">${esc(S.last_note || '—')}</div>`;
+  if (dc.text) nowHtml += `<div class="mut" style="font-size:12px;margin-top:10px">Última decisão (${esc(dc.time)}, etapa ${dc.stage}):</div><div style="font-size:13px">${esc(dc.text)}</div>`;
+  else if (ls.text) nowHtml += `<div class="mut" style="font-size:12px;margin-top:10px">Último sinal (${esc(ls.time)}):</div><div style="font-size:13px">${esc(ls.text)}</div>`;
+  $('now').innerHTML = nowHtml;
+
+  const H = S.hierarchy;
+  if (H && H.enabled) {
+    const lvl = (name, role, o, extra) => `<div style="flex:1;min-width:170px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:rgba(255,255,255,.015)"><div class="mut" style="font-size:12px">${name} · ${esc(o.tf)}</div><div style="font-size:18px;font-weight:700;margin:2px 0" class="${o.trend > 0 ? 'buy' : o.trend < 0 ? 'sell' : 'mut'}">${o.trend > 0 ? '▲ ' : o.trend < 0 ? '▼ ' : '● '}${esc(o.text)}</div><div class="mut" style="font-size:12px">${role}${extra ? ' · <span class="warn">' + extra + '</span>' : ''}<br><span class="dim">${esc(o.how)}</span></div></div>`;
+    const corr = H.primary.trend !== 0 && H.secondary.trend === -H.primary.trend ? 'em correção' : '';
+    const verdict = (label, x, c) => `<div style="flex:1;min-width:200px;border-radius:12px;padding:10px 12px;background:${x.allowed ? 'var(--up-bg)' : 'var(--dn-bg)'}"><b class="${c}">${label}: ${H.mandatory ? (x.allowed ? 'PERMITIDA' : 'BLOQUEADA') : (x.allowed ? 'voto a favor' : 'voto contra')}</b><div class="mut" style="font-size:12px;margin-top:3px">${esc((x.text || '').split(' | ').slice(-1)[0])}</div></div>`;
+    $('hier').innerHTML = `<div style="display:flex;gap:10px;flex-wrap:wrap">${lvl('Primária', 'meses ou anos: direção principal', H.primary)}${lvl('Secundária', 'correções', H.secondary, corr)}${lvl('Terciária', 'curto prazo', H.tertiary)}</div><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">${verdict('Compra', H.buy, 'buy')}${verdict('Venda', H.sell, 'sell')}</div>`;
+    $('hierNote').textContent = H.mandatory ? `regra: exige ${H.levels_required} nível(is) alinhado(s)` : 'é 1 voto entre 12 indicadores, não bloqueia sozinha';
+  } else { $('hier').innerHTML = '<div class="mut">Hierarquia desligada.</div>'; $('hierNote').textContent = ''; }
+
+  const item = (ok, text, warn) => `<div><b class="${ok ? 'buy' : warn ? 'warn' : 'sell'}">${ok ? '✓' : warn ? '!' : '✗'}</b><span>${text}</span></div>`;
+  const N = S.news || {};
+  $('health').innerHTML = item(S.alive, S.alive ? 'Robô enviando dados' : 'Robô parado ou MT5 fechado') + item(mode === 'DEMO', mode === 'DEMO' ? 'Conta demo (seguro para testar)' : mode === 'REAL' ? 'Conta REAL em uso' : 'Conta de concurso', mode !== 'DEMO' && mode !== 'REAL') +
+    item(S.algo_allowed, S.algo_allowed ? 'Algo Trading permitido' : 'Algo Trading desligado') + item(!ctl.paused, ctl.paused ? '<b>Pausado pelo painel</b>' : 'Não está pausado', ctl.paused) +
+    item(!g.killed, g.killed ? '<b>Trava de drawdown ativa</b>: desligado até você marcar InpResetKill' : 'Trava de drawdown livre') + item(!g.day_blocked, g.day_blocked ? '<b>Trava diária ativa</b>: sem novas ordens até amanhã' : 'Trava de perda diária livre') +
+    item(g.in_session, g.in_session ? 'Dentro do horário (Londres/NY)' : `Fora do horário: ${esc(g.session_note)}`, !g.in_session) + (S.market ? item(S.market.spread <= L.max_spread, `Spread ${f2(S.market.spread)} (máximo ${f2(L.max_spread)})`, S.market.spread > L.max_spread) : '') +
+    (N.calendar_ok !== undefined ? item(!N.blackout, N.blackout ? 'Bloqueio de notícia ativo' : (N.calendar_ok ? 'Sem notícia forte por perto' : 'Calendário econômico indisponível'), !N.calendar_ok) : '');
+  $('recentDec').innerHTML = (J.events || []).filter(e => e.decision).slice(0, 4).map(e => decCard(e, true)).join('') || '<div class="empty">Ainda não houve decisões. Quando o robô encontrar um sinal, a análise e a verificação aparecem aqui.</div>';
+}
+
+function renderDecisions() {
+  const J = D.journal, all = (J.events || []).filter(e => e.decision), list = decF === 'all' ? all : all.filter(e => e.decision.result === decF);
+  $('decList').innerHTML = list.length ? list.slice(0, 60).map(e => decCard(e, false)).join('') : '<div class="empty">Nenhuma decisão neste filtro.</div>';
+  const dcs = J.decisions || {}, fails = dcs.fails || [], max = Math.max(1, ...fails.map(f => f.n));
+  $('failBars').innerHTML = fails.length ? `<div class="bars">${fails.map(f => `<div class="bar"><span>${esc(f.name)}</span><div class="b"><i style="width:${f.n / max * 100}%;background:var(--dn)"></i></div><b>${f.n}</b></div>`).join('')}</div>` : '<div class="mut">Ainda sem recusas registradas.</div>';
+  const c = dcs.counts || {}, n1 = (c.NAO_ENTROU_etapa1 || 0), ver = c.EM_VERIFICACAO_etapa1 || 0, n2 = c.NAO_ENTROU_etapa2 || 0, en = (c.ENTROU_etapa2 || 0) + (c.ENTROU_etapa1 || 0), tot = n1 + ver + (c.ENTROU_etapa1 || 0);
+  const step = (l, v, col) => `<div class="bar"><span>${l}</span><div class="b"><i style="width:${tot ? v / tot * 100 : 0}%;background:${col}"></i></div><b>${v}</b></div>`;
+  $('funnel').innerHTML = tot ? `<div class="bars">${step('Sinais analisados', tot, '#8a96a8')}${step('Barrados na etapa 1', n1, '#f6465d')}${step('Foram para verificação', ver + (c.ENTROU_etapa1 || 0), '#5b9dff')}${step('Barrados na etapa 2', n2, '#e8b64c')}${step('Entraram', en, '#2ebd85')}</div>` : '<div class="mut">O funil aparece quando houver decisões.</div>';
+}
+
+function renderTrades() {
+  const J = D.journal, all = (J.trades || []).filter(t => inRange(t.close_t)), rs = all.map(t => t.r), n = rs.length, w = rs.filter(r => r > 0).length;
+  const sum = all.reduce((a, t) => a + t.result, 0), sumR = rs.reduce((a, b) => a + b, 0), mean = n ? sumR / n : 0, sd = n > 1 ? Math.sqrt(rs.reduce((a, r) => a + (r - mean) ** 2, 0) / (n - 1)) : 0, ci = n > 1 ? 1.96 * sd / Math.sqrt(n) : null;
+  const kp = (l, v, c = '') => `<div class="card kpi" style="box-shadow:none"><div class="l">${l}</div><div class="v ${c}" style="font-size:20px">${v}</div></div>`;
+  $('tKpis').innerHTML = kp('Operações fechadas', n) + kp('Acerto', n ? (100 * w / n).toFixed(1) + '%' : '--') + kp('Resultado', n ? sg(sum) + ' US$' : '--', cl(sum)) + kp('Resultado em R', n ? sg(sumR) + ' R' : '--', cl(sumR)) + kp('R por operação (±IC95%)', n ? sg(mean, 3) + (ci != null ? ' ±' + ci.toFixed(3) : '') : '--') + kp('Maior queda (US$)', J.stats && J.stats.max_dd_usd != null ? f2(J.stats.max_dd_usd) : '--');
+  const conclusive = ci != null && n >= 30 && Math.abs(mean) > ci;
+  $('tVerdict').innerHTML = n === 0 ? '<div class="verdict">Nenhuma operação fechada neste período.</div>' : `<div class="verdict ${conclusive ? (mean > 0 ? 'good' : 'bad') : ''}">${n < 30 ? `Amostra pequena (${n} de 30 operações mínimas): ainda não dá para concluir nada.` : conclusive ? (mean > 0 ? 'Resultado positivo com significância estatística. Confirme por mais tempo antes de arriscar dinheiro real.' : 'Resultado negativo com significância estatística.') : 'Inconclusivo: o intervalo de confiança inclui zero; não dá para distinguir de sorte.'}</div>`;
+  const rows = all.slice().reverse().map((t, i) => `<tr class="trow" data-i="${i}"><td>${esc(t.open_t)}</td><td class="${t.side === 'COMPRA' ? 'buy' : 'sell'}">${t.side === 'COMPRA' ? '▲' : '▼'} ${esc(t.side)}</td><td>${esc(t.setup)}</td><td>${f2(t.lots)}</td><td>${f2(t.entry)}</td><td>${f2(t.exit_price)}</td><td class="${cl(t.result)}">${sg(t.result)}</td><td class="${cl(t.r)}">${sg(t.r)}</td><td>${t.minutes ?? '--'} min</td><td>${esc(t.exit || '--')}</td><td>${t.certainty != null ? t.certainty + '%' : '--'}</td></tr>
+    <tr class="detail" id="d${i}" style="display:none"><td colspan="11"><b>Por que entrou:</b> ${esc(t.why)}<div class="chips">${(t.checks || []).map(c => `<span class="chip ${c.status === 'ok' ? 'ok' : c.status === 'FALHOU' ? 'bad' : c.status === 'neutro' ? '' : 'warn'}" title="${esc(c.detail)}">${c.status === 'ok' ? '✓' : c.status === 'FALHOU' ? '✗' : c.status === 'neutro' ? '○' : '✗'} ${esc(c.name)}</span>`).join('')}</div>${chips(t.conf_ok, t.conf_missing)}<div class="mut" style="font-size:12px;margin-top:6px">stop ${f2(t.sl)} · alvo ${f2(t.tp)} · risco planejado US$ ${f2(t.risk)} · R:R planejado ${f2(t.rr_plan)} · fechou em ${esc(t.close_t)}</div></td></tr>`).join('');
+  $('tTable').innerHTML = `<tr><th>Abertura</th><th>Lado</th><th>Setup</th><th>Lote</th><th>Entrada</th><th>Saída</th><th>US$</th><th>R</th><th>Duração</th><th>Como saiu</th><th>Certeza</th></tr>${rows || '<tr><td colspan="11" class="mut" style="text-align:center;padding:20px">Sem operações.</td></tr>'}`;
+}
+$('tTable').addEventListener('click', e => { const tr = e.target.closest('tr.trow'); if (!tr) return; const d = $('d' + tr.dataset.i); d.style.display = d.style.display === 'none' ? '' : 'none'; });
+
+/* ---------- validação ---------- */
+let VAL = null;
+async function loadValid() { try { const r = await fetch('/api/robot/validation'); VAL = await r.json(); } catch { VAL = { error:true }; } if (tab === 'valid') renderValid(); }
+function renderValid() {
+  if (!VAL) { $('vKpis').innerHTML = '<div class="empty">Carregando…</div>'; loadValid(); return; }
+  if (VAL.error) { $('vKpis').innerHTML = '<div class="empty">Não consegui ler os dados da validação.</div>'; return; }
+  const c = VAL.config, B0 = (VAL.ativos || {})[SYM] || { validacao: {}, ajuste: {}, trades_validacao: [], inicio: '2099.01.01', asset: SYM }, v = B0.validacao, a = B0.ajuste, N = c.objetivo_n, n = v.n || 0;
+  $('vBan').innerHTML = `<b>Fase de validação: ${esc(B0.asset)} (conta demo).</b> Início: ${esc(String(B0.inicio).slice(0, 10).replace(/\./g, '-'))} · Kairos v${esc(c.versao)}. ${esc(c.regra)}`;
+  const kp = (l, val, cls = '', s = '') => `<div class="card kpi"><div class="l">${l}</div><div class="v ${cls}">${val}</div><div class="s">${s}</div></div>`;
+  const pct = Math.min(100, 100 * n / N);
+  $('vKpis').innerHTML = `<div class="card kpi"><div class="l">Trades da validação</div><div class="v">${n} <span class="mut" style="font-size:14px">de ${N}</span></div><div class="meter"><i class="${n >= N ? '' : 'mid'}" style="width:${pct}%"></i></div><div class="s">${n >= N ? 'amostra mínima atingida' : 'faltam ' + (N - n) + ' para poder concluir algo'}</div></div>`
+    + kp('Takes / loss', n ? `${v.wins} / ${n - v.wins}` : '--', '', n ? (100 * v.wins / n).toFixed(0) + '% de acerto (em 1:3 o ponto de equilíbrio é 25%)' : '')
+    + kp('Resultado em R', n ? sg(v.sum_r) + ' R' : '--', cl(v.sum_r || 0), n ? 'US$ ' + sg(v.usd) : '')
+    + kp('R por operação', n ? sg(v.avg_r, 3) + (v.ci95 != null ? ' ±' + v.ci95 : '') : '--', cl(v.avg_r || 0), 'intervalo de confiança de 95%')
+    + kp('Maior queda', n ? f2(v.max_dd_r) + ' R' : '--', 'warn', 'da curva de R da validação');
+  const ok = x => x ? '<b class="buy">✓</b>' : '<b class="mut">○</b>';
+  const crit = [[n >= N, `${N} ou mais trades fechados (hoje ${n})`], [n > 0 && v.avg_r > 0, 'R por operação positivo'], [!!v.conclusive && v.avg_r > 0, 'resultado conclusivo: o intervalo de confiança não inclui zero'],
+    [n > 0 && v.max_dd_r < 8, 'maior queda abaixo de 8R (≈ 4% da conta com 0,5% de risco)'], [n >= N && !!v.conclusive, 'só então considerar conta real, começando com risco 0,25% e 1 posição']];
+  $('vCrit').innerHTML = `<div class="check">${crit.map(([k, t]) => `<div>${ok(k)}<span>${esc(t)}</span></div>`).join('')}</div><div class="mut" style="font-size:12.5px;margin-top:10px">Com poucos trades o resultado é dominado pela sorte: 4 loss seguidos acontecem cerca de 1 vez em 3 mesmo com o robô funcionando como esperado. Por isso a decisão espera 30 trades.</div>`
+    + `<div class="mut" style="font-size:12.5px;margin-top:8px"><b>Fase de ajuste (antes do início):</b> ${a.n || 0} trades, ${a.n ? sg(a.sum_r) + ' R' : '--'}. Não conta, porque foram feitos com versões anteriores do robô.</div>`;
+  $('vTrades').innerHTML = (B0.trades_validacao || []).length ? `<table class="tbl"><tr><th>Abertura</th><th>Lado</th><th>R</th><th>Saída</th></tr>${B0.trades_validacao.map(t => `<tr><td>${esc(t.open_t)}</td><td class="${t.side === 'COMPRA' ? 'buy' : 'sell'}">${esc(t.side)}</td><td class="${cl(t.r)}">${sg(t.r)}</td><td>${esc(t.exit)}</td></tr>`).join('')}</table>` : '<div class="empty">Nenhum trade ainda nesta fase. Ligue o robô no MT5 (demo) e deixe rodando.</div>';
+  const B = VAL.backtests || { linhas: [] };
+  $('vBtNote').textContent = B.concluida ? 'concluído' : (B.linhas.length ? 'em andamento…' : 'ainda não rodou');
+  $('vBt').innerHTML = B.linhas.length ? '<tr><th>Tempo</th><th>Variação</th><th>Período</th><th>Trades</th><th>Acerto</th><th>R total</th><th>R/op ±IC</th><th>Fator de lucro</th></tr>' + B.linhas.map(l => { const p = l.split(' | ').map(x => x.replace(/^[a-zA-Z ]+=/, '')); const r = (p[6] || ''); const num = parseFloat(r); return `<tr><td>${esc(p[0])}</td><td>${esc(p[1])}</td><td>${esc(p[2])}</td><td>${esc(p[3] || '')}</td><td>${esc(p[4] || '')}</td><td>${esc(p[5] || '')}</td><td class="${num > 0 ? 'buy' : num < 0 ? 'sell' : ''}">${esc(r)}</td><td>${esc(p[7] || '')}</td></tr>`; }).join('') : '<tr><td class="mut">Sem resultados ainda.</td></tr>';
+}
+
+/* ---------- ativos (Kairos opera ouro e bitcoin) ---------- */
+const ICON = { Ouro:'🥇', Bitcoin:'₿' };
+function renderSymBar() {
+  if (!ROBOTS.length) return;
+  if (!ROBOTS.some(r => r.sym === SYM)) SYM = ROBOTS[0].sym;
+  $('fSym').innerHTML = ROBOTS.map(r => `<button data-sym="${esc(r.sym)}" class="${r.sym === SYM ? 'on' : ''}" title="${esc(r.sym)} · ${r.alive ? 'robô ativo' : 'robô parado'}"><span style="color:${r.alive ? 'var(--up)' : 'var(--dn)'}">●</span> ${ICON[r.asset] || ''} ${esc(r.asset)}</button>`).join('');
+  const el = $('robotsRow');
+  if (el) el.innerHTML = ROBOTS.map(r => `<div class="card kpi" data-sym="${esc(r.sym)}" style="cursor:pointer;${r.sym === SYM ? 'border-color:rgba(232,182,76,.6)' : ''}"><div class="l">${ICON[r.asset] || ''} ${esc(r.asset)} · ${esc(r.sym)} ${esc((r.tf || '').replace('PERIOD_', ''))}</div>
+    <div class="v" style="font-size:18px"><span class="${r.alive ? 'buy' : 'sell'}">${r.alive ? (r.paused ? '⏸ pausado' : '● ativo') : '○ parado'}</span> <span class="mut" style="font-size:12px">v${esc(r.version || '--')}${r.h24 ? ' · 24 h' : ''}</span></div>
+    <div class="s">${r.alive ? '' : '<b class="sell">parado há ' + esc(r.stale_for || '--') + '</b> · '}${r.position ? 'posição aberta' : 'sem posição'} · hoje ${r.trades_today == null ? '--' : r.trades_today} entrada(s) · <span class="${cl(r.pnl_today || 0)}">US$ ${r.pnl_today == null ? '--' : sg(r.pnl_today)}</span> · ${r.closed} fechados (${sg(r.sum_r)}R)</div>
+    <div class="s" style="margin-top:4px">${esc(r.note || '')}</div></div>`).join('');
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-sym]'); if (!b || !b.dataset.sym || b.dataset.sym === SYM) return;
+  SYM = b.dataset.sym; store.set('rsym', SYM); NEWS = null; diarySig = ''; VAL = null; D = null; renderSymBar(); tick(); tickNews();
+});
+
+/* ---------- diário ---------- */
+let DIARY = null, diaryF = 'all', diaryA = 'all', diarySig = '';
+async function loadDiary() { try { const r = await fetch('/api/robot/diary'); DIARY = await r.json(); } catch { DIARY = { error:true }; } if (tab === 'diary') renderDiary(); }
+$('fDiaryA').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; diaryA = b.dataset.a; diarySig = ''; renderDiary(); });
+$('fDiary').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; diaryF = b.dataset.f; document.querySelectorAll('#fDiary button').forEach(x => x.classList.toggle('on', x === b)); diarySig = ''; renderDiary(); });
+function renderDiary() {
+  if (!DIARY) { $('dList').innerHTML = '<div class="empty">Carregando o diário…</div>'; loadDiary(); return; }
+  if (DIARY.error) { $('dList').innerHTML = '<div class="empty">Não consegui ler o diário agora.</div>'; return; }
+  const T = DIARY.trades || [], n = T.length, w = T.filter(t => t.win).length, sumR = T.reduce((a, t) => a + t.r, 0), usd = T.reduce((a, t) => a + t.usd, 0);
+  const kp = (l, v, c = '', s = '') => `<div class="card kpi"><div class="l">${l}</div><div class="v ${c}">${v}</div><div class="s">${s}</div></div>`;
+  $('dKpis').innerHTML = kp('Trades fechados', n, '', DIARY.bars_pending ? DIARY.bars_pending + ' gráfico(s) a caminho' : 'todos com gráfico') + kp('Takes', w, 'buy', n ? (100 * w / n).toFixed(0) + '% de acerto' : '') + kp('Loss', n - w, 'sell') + kp('Resultado em R', n ? sg(sumR) + ' R' : '--', cl(sumR)) + kp('Resultado em US$', n ? sg(usd) : '--', cl(usd));
+  const asc = T.slice().reverse(), pts = asc.map(t => t.cum_r), W = 560, H = 170;
+  if (pts.length) {
+    const all = [0, ...pts], mx = Math.max(...all, 0.5), mn = Math.min(...all, -0.5), X = i => 20 + i * (W - 40) / Math.max(all.length - 1, 1), Y = v => 14 + (mx - v) / (mx - mn) * (H - 28);
+    const path = all.map((v, i) => (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(v).toFixed(1)).join(' ');
+    $('dCurve').innerHTML = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto"><line x1="20" x2="${W - 20}" y1="${Y(0)}" y2="${Y(0)}" stroke="#3a465a" stroke-dasharray="4 4"/><path d="${path}" fill="none" stroke="#e8b64c" stroke-width="2.4"/>${all.slice(1).map((v, i) => `<circle cx="${X(i + 1)}" cy="${Y(v)}" r="5" fill="${asc[i].win ? '#2ebd85' : '#f6465d'}"><title>Trade ${i + 1}: ${sg(asc[i].r)}R · acumulado ${sg(v)}R</title></circle>`).join('')}</svg>`;
+  } else $('dCurve').innerHTML = '<div class="empty">Sem trades ainda.</div>';
+  const vd = f => { const c = f.com, s = f.sem; if (Math.min(c.n, s.n) < DIARY.min_n) return '<span class="chip warn">amostra pequena</span>'; return f.conclusivo ? '<span class="chip ok">conclusivo</span>' : '<span class="chip">inconclusivo</span>'; };
+  const cell = x => x.n ? `${x.n} trade(s) · ${sg(x.media)}R${x.ic != null ? ' ±' + x.ic : ''}` : '0';
+  $('dLearn').innerHTML = `<div class="mut" style="font-size:12.5px;margin-bottom:8px">R médio com e sem cada fator. O robô <b>não muda sozinho</b>: só sugere depois de ${DIARY.min_n}+ trades por grupo.</div><table class="tbl"><tr><th>Fator</th><th>Com</th><th>Sem</th><th></th></tr>${(DIARY.fatores || []).map(f => `<tr><td>${esc(f.fator)}</td><td>${cell(f.com)}</td><td>${cell(f.sem)}</td><td>${vd(f)}</td></tr>`).join('')}</table>`;
+  const assets = [...new Set(T.map(t => t.asset))];
+  $('fDiaryA').style.display = assets.length > 1 ? '' : 'none';
+  $('fDiaryA').innerHTML = ['all', ...assets].map(a => `<button data-a="${esc(a)}" class="${diaryA === a ? 'on' : ''}">${a === 'all' ? 'Os dois' : esc(a)}</button>`).join('');
+  const list = T.filter(t => (diaryF === 'all' || (diaryF === 'win' ? t.win : !t.win)) && (diaryA === 'all' || t.asset === diaryA));
+  const sig = diaryF + '|' + diaryA + '|' + list.map(t => t.pos + t.chart + t.pos_saida + t.causas.join()).join(';');
+  if (sig === diarySig) return;
+  diarySig = sig;
+  $('dList').innerHTML = list.length ? list.map(t => {
+    const col = t.win ? 'var(--up)' : 'var(--dn)', bg = t.win ? 'var(--up-bg)' : 'var(--dn-bg)';
+    const mm = (t.mae_r != null ? `MAE ${f2(t.mae_r)}R` : 'MAE n/d') + ' · ' + (t.mfe_r != null ? `MFE ${f2(t.mfe_r)}R` : 'MFE n/d');
+    const body = t.chart ? `<iframe src="/graficos/${t.pos}.html" loading="lazy" style="width:100%;height:880px;border:0;border-radius:10px;background:#0f1420"></iframe>` :
+      `<div class="grid two" style="margin:0"><div class="card" style="box-shadow:none;border-left:4px solid var(--blue)"><div class="card-b"><b class="blue">POR QUE O ROBÔ ENTROU</b><div style="margin-top:4px">${esc(t.entrada_txt)}</div></div></div>
+       <div class="card" style="box-shadow:none;border-left:4px solid ${col}"><div class="card-b"><b style="color:${col}">${t.win ? 'POR QUE DEU TAKE' : 'POR QUE DEU LOSS'}</b><div style="margin-top:4px">${esc(t.resultado_txt)}</div><div class="chips">${t.causas.map(c => `<span class="chip">${esc(c)}</span>`).join('')}</div></div></div></div>
+       <div class="mut" style="font-size:12.5px;margin-top:8px">⏳ O gráfico interativo aparece cerca de 35 minutos depois do fechamento (o robô busca os candles, inclusive o que o preço fez depois da saída).</div>`;
+    return `<div class="card" style="margin-bottom:14px;border-left:5px solid ${col}"><div class="card-h"><span class="badge" style="background:${bg};color:${col}">${t.win ? 'TAKE' : 'LOSS'}</span><h2 style="text-transform:none;letter-spacing:0;font-size:14px;color:var(--txt)">${ICON[t.asset] || ''} ${esc(t.asset)} · ${t.side === 'COMPRA' ? '▲' : '▼'} ${esc(t.side)} · ${esc(t.setup)}</h2><span class="mut">${esc(t.open_t)} · ${t.minutes} min · ${esc(t.sessao)}</span>
+      <span style="margin-left:auto;font-weight:700;color:${col}">${sg(t.r)}R · US$ ${sg(t.usd)}</span></div><div class="card-b"><div class="chips" style="margin:0 0 10px"><span class="chip">${mm}</span><span class="chip ${t.pos_saida === 'Teria dado alvo' ? 'warn' : ''}">Depois da saída: ${esc(t.pos_saida)}</span><span class="chip">saída: ${esc(t.exit)}</span></div>${body}</div></div>`;
+  }).join('') : '<div class="empty">Nenhum trade neste filtro.</div>';
+}
+
+/* ---------- gráficos ---------- */
+const lwTheme = { layout:{ background:{ type:'solid', color:'#0e121a' }, textColor:'#8a96a8', fontSize:12 }, grid:{ vertLines:{ color:'transparent' }, horzLines:{ color:'#182030' } }, timeScale:{ timeVisible:true, borderColor:'#222b3b' }, rightPriceScale:{ borderColor:'#222b3b' }, crosshair:{ vertLine:{ color:'rgba(232,182,76,.4)' }, horzLine:{ color:'rgba(232,182,76,.4)' } } };
+function mk(id, tall) { const el = $(id); if (charts[id]) { charts[id].remove(); } const c = LightweightCharts.createChart(el, { ...lwTheme, autoSize:true }); charts[id] = c; return c; }
+function barsSvg(items, fmt, colorFn, w = 560, h = 190) {
+  if (!items.length) return '<div class="mut">Sem dados ainda.</div>';
+  const max = Math.max(...items.map(i => Math.abs(i.v)), 0.001), bw = (w - 20) / items.length, z = h / 2;
+  return `<svg viewBox="0 0 ${w} ${h + 22}" style="width:100%;height:auto"><line x1="10" x2="${w - 10}" y1="${z}" y2="${z}" stroke="#3a465a"/>${items.map((it, k) => { const bh = Math.abs(it.v) / max * (z - 12), x = 10 + k * bw; return `<g data-tip="1"><rect x="${x + 2}" y="${it.v >= 0 ? z - bh : z}" width="${Math.max(2, bw - 4)}" height="${Math.max(1, bh)}" rx="2" fill="${colorFn(it)}" onmousemove="showTip(event, '${esc(fmt(it)).replace(/'/g, '&#39;')}')" onmouseleave="tip.style.display='none'"/><text x="${x + bw / 2}" y="${h + 14}" text-anchor="middle" font-size="10" fill="#5b677a">${esc(it.l)}</text></g>`; }).join('')}</svg>`;
+}
+async function renderCharts() {
+  const J = D.journal, st = J.stats || {}, trades = (J.trades || []).filter(t => inRange(t.close_t));
+  // equity
+  let cum = 0, cumR = 0; const pts = trades.map(t => { cum += t.result; cumR += t.r; return { time:epoch(t.close_t), value:eqUnit === 'r' ? +cumR.toFixed(2) : +cum.toFixed(2) }; });
+  const seen = new Map(); pts.forEach(p => { seen.set(p.time, p); }); const eq = [...seen.values()].sort((a, b) => a.time - b.time);
+  const c1 = mk('cEq'); if (eq.length) { const s = c1.addAreaSeries({ lineColor:'#e8b64c', topColor:'rgba(232,182,76,.28)', bottomColor:'rgba(232,182,76,0)', lineWidth:2, priceLineVisible:false }); s.setData(eq); s.createPriceLine({ price:0, color:'#3a465a', lineWidth:1, lineStyle:2 }); c1.timeScale().fitContent(); } else $('cEq').innerHTML = '<div class="empty">A curva aparece a partir da primeira operação fechada.</div>';
+  // por dia
+  const days = (J.daily || []).filter(d => inRange(d.day + ' 12:00:00'));
+  const c2 = mk('cDay'); if (days.length) { const s = c2.addHistogramSeries({ priceLineVisible:false, priceFormat:{ type:'price', precision:2, minMove:0.01 } }); s.setData(days.map(d => ({ time:d.day.replace(/\./g, '-'), value:d.usd, color:d.usd >= 0 ? '#2ebd85' : '#f6465d' }))); c2.timeScale().fitContent(); } else $('cDay').innerHTML = '<div class="empty">Sem operações no período.</div>';
+  // histograma de R
+  const hist = {}; trades.forEach(t => { const b = Math.max(-3, Math.min(6, Math.floor(t.r * 2) / 2)); hist[b] = (hist[b] || 0) + 1; });
+  $('cHist').innerHTML = barsSvg(Object.keys(hist).map(Number).sort((a, b) => a - b).map(k => ({ l:(k > 0 ? '+' : '') + k, v:hist[k], k })), i => `${i.k >= 0 ? '+' : ''}${i.k} a ${i.k + 0.5} R: ${i.v} operação(ões)`, i => i.k >= 0 ? '#2ebd85' : '#f6465d');
+  // por hora
+  const hrs = {}; trades.forEach(t => { const h = +t.open_t.slice(11, 13); (hrs[h] = hrs[h] || { n:0, r:0 }); hrs[h].n++; hrs[h].r += t.r; });
+  $('cHour').innerHTML = barsSvg(Object.keys(hrs).map(Number).sort((a, b) => a - b).map(h => ({ l:String(h).padStart(2, '0'), v:+hrs[h].r.toFixed(2), n:hrs[h].n, h })), i => `${String(i.h).padStart(2, '0')}h: ${i.n} operação(ões), ${i.v >= 0 ? '+' : ''}${i.v} R`, i => i.v >= 0 ? '#2ebd85' : '#f6465d');
+  // setups e lados
+  const row = (l, s) => `<tr><td>${esc(l)}</td><td>${s.n}</td><td>${s.n ? s.win_rate + '%' : '--'}</td><td class="${cl(s.sum_r)}">${s.n ? sg(s.sum_r) + 'R' : '--'}</td><td>${s.n ? sg(s.avg_r, 3) + (s.ci95 != null ? ' ±' + s.ci95 : '') : '--'}</td></tr>`;
+  $('cSetup').innerHTML = `<table class="tbl"><tr><th></th><th>Ent.</th><th>Acerto</th><th>Total</th><th>R/op ±IC</th></tr>${Object.entries(st.by_setup || {}).map(([k, s]) => row(k, s)).join('')}${Object.entries(st.by_side || {}).map(([k, s]) => row(k, s)).join('') || '<tr><td colspan=5 class="mut">--</td></tr>'}</table>`;
+  $('cConf').innerHTML = `<table class="tbl"><tr><th></th><th>Com</th><th>R/op</th><th>Sem</th><th>R/op</th></tr>${Object.entries(st.by_conf || {}).map(([k, o]) => `<tr><td>${esc(k)}</td><td>${o.with.n}</td><td>${o.with.n ? sg(o.with.avg_r, 3) : '--'}</td><td>${o.without.n}</td><td>${o.without.n ? sg(o.without.avg_r, 3) : '--'}</td></tr>`).join('') || '<tr><td colspan=5 class="mut">--</td></tr>'}</table><div class="foot">Serve para descobrir se cada confirmação ajuda de verdade. Só vale com dezenas de operações.</div>`;
+}
+
+/* ---------- notícias ---------- */
+function renderNews() {
+  const N = NEWS, S = D.status || {}, sn = S.news || {}, mode = S.mode || {};
+  if (!N || N.error) { $('sent').innerHTML = '<div class="empty">Não foi possível buscar as manchetes agora.</div>'; $('heads').innerHTML = ''; }
+  else {
+    const k = N.score >= 20 ? 'buy' : N.score <= -20 ? 'sell' : 'mut';
+    $('newsAge').textContent = 'atualizado ' + N.updated;
+    $('sent').innerHTML = `${gauge(N.score)}<div style="text-align:center;margin-top:-6px"><b class="${k}" style="font-size:28px">${N.score > 0 ? '+' : ''}${N.score}</b> <span class="${k}" style="font-weight:600">${esc(N.label)}</span></div>
+      <div class="mut" style="font-size:12.5px;margin-top:10px">${N.n_headlines} manchetes relevantes (${N.n_scored} com sinal), meia-vida de 12 h. Fontes: ${esc((N.sources_ok || []).join(', '))}${(N.sources_failed || []).length ? ' · <span class="warn">falharam: ' + esc(N.sources_failed.join(', ')) + '</span>' : ''}.</div>
+      <div class="note" style="margin-top:10px;font-size:12.5px;color:var(--mut)">${mode.sentiment_mode === 0 ? 'O robô <b>não usa</b> o sentimento (desligado).' : mode.sentiment_mode === 1 ? `O robô <b>veta</b> compras se a nota for menor que −${mode.sentiment_veto ?? 50} e vendas se for maior que +${mode.sentiment_veto ?? 50}.` : 'O robô usa o sentimento como uma das verificações.'} Estado lido pelo robô: ${sn.sentiment && sn.sentiment.has ? `nota ${sn.sentiment.score} (${esc(sn.sentiment.label)}), ${sn.sentiment.age_min} min` : 'sem nota recente'}.</div>`;
+    $('heads').innerHTML = (N.headlines || []).map(h => `<div class="ev" style="grid-template-columns:70px 60px 1fr"><span class="t">${h.age_h} h</span><span><span class="badge ${h.score > 0 ? 'buy' : h.score < 0 ? 'sell' : ''}">${h.score > 0 ? '+' : ''}${h.score}</span></span><span class="x"><b>${esc(h.title)}</b> <span class="dim">· ${esc(h.source)}</span></span></div>`).join('') || '<div class="mut">Sem manchetes relevantes.</div>';
+  }
+  const evs = sn.events || [];
+  $('cal').innerHTML = (sn.calendar_ok === false ? '<div class="verdict">O calendário econômico não está disponível neste terminal.</div>' : '') +
+    (sn.blackout ? `<div class="verdict bad">Bloqueio ativo: ${esc(sn.blackout_why)}</div>` : '') +
+    (evs.length ? evs.map(e => `<div class="ev" style="grid-template-columns:130px 90px 1fr"><span class="t">${esc(e.time)}</span><span><span class="badge ${e.in_min < 0 ? '' : e.in_min <= 60 ? 'gold' : 'blue'}">${e.in_min < 0 ? 'passou' : 'em ' + (e.in_min >= 60 ? Math.floor(e.in_min / 60) + ' h ' + (e.in_min % 60) + ' min' : e.in_min + ' min')}</span></span><span class="x"><b>${esc(e.name)}</b></span></div>`).join('') : '<div class="mut">Nenhuma notícia de alto impacto nas próximas 24 h.</div>');
+}
+
+/* ---------- atividade ---------- */
+const GROUPS = { dec:['DECISAO', 'SINAL'], trades:['ABRIU', 'FECHOU', 'fechou_posicao', 'NAO_ABRIU'], cmd:['COMANDO'], guards:['TRAVA_DIARIA', 'TRAVA_DRAWDOWN', 'trava_liberada', 'INICIO', 'FIM', 'CONFIG', 'HIERARQUIA_INFO', 'erro_fechar'] };
+const REASONS = { '0':'o robô terminou sozinho.', '1':'você removeu o robô do gráfico (acontece também ao anexar de novo).', '2':'o robô foi recompilado (código atualizado).', '3':'o símbolo ou o tempo gráfico do gráfico foi trocado.', '4':'o gráfico foi fechado.', '5':'os parâmetros do robô foram alterados.', '6':'outra conta foi conectada no MT5.', '7':'um modelo (template) foi aplicado ao gráfico.', '8':'o robô não conseguiu iniciar (falha na inicialização).', '9':'o MetaTrader 5 foi fechado.' };
+function evHtml(e) {
+  let badge = '<span class="badge">' + esc(e.ev) + '</span>', txt = esc(e.msg);
+  const conf = () => (e.conf_ok || e.conf_missing) ? chips(e.conf_ok || [], e.conf_missing || []) : '';
+  switch (e.ev) {
+    case 'DECISAO': { const d = e.decision; badge = `<span class="badge ${d.result === 'ENTROU' ? (d.side === 'VENDA' ? 'sell' : 'buy') : d.result === 'NAO_ENTROU' ? 'sell' : 'blue'}">${{ ENTROU:'ENTROU', NAO_ENTROU:'NÃO ENTROU', EM_VERIFICACAO:'VERIFICANDO' }[d.result] || d.result}</span>`; txt = `<b>${esc(d.side || '')} ${esc(d.setup || '')}</b> · etapa ${d.stage} · certeza ${d.certainty}%<div style="margin-top:3px">${esc(d.summary)}</div>`; break; }
+    case 'SINAL': badge = '<span class="badge gold">SINAL</span>'; txt = e.side ? `<b class="${e.side === 'COMPRA' ? 'buy' : 'sell'}">${e.side}</b> <b>${esc(e.setup)}</b> · R:R ${e.rr} · ${e.conf_n} confirmação(ões)${conf()}<div style="margin-top:4px">${esc(e.reasons)}</div>` + (e.hier ? `<div style="margin-top:4px;font-size:12px" class="${e.hier.ok ? 'buy' : 'sell'}">${e.hier.ok ? '✓' : '✗'} Hierarquia: ${esc(e.hier.text)}</div>` : '') : esc(e.msg); break;
+    case 'ABRIU': badge = `<span class="badge ${e.side === 'COMPRA' ? 'buy' : 'sell'}">ABRIU</span>`; txt = e.side ? `<b>${e.side} ${esc(e.setup)}</b> · ${f2(e.lots)} lote a ${f2(e.price)} · stop ${f2(e.sl)} · alvo ${f2(e.tp)} · R:R ${e.rr} · risco planejado ${f2(e.risk)}${conf()}` : esc(e.msg); break;
+    case 'FECHOU': badge = `<span class="badge ${e.result > 0 ? 'buy' : 'sell'}">FECHOU</span>`; txt = e.result != null ? `<b class="${cl(e.result)}">${sg(e.result)}</b>${e.r != null ? ` (${sg(e.r)} R)` : ''} · ${esc((e.msg.match(/saida=(.*)$/) || [])[1] || '')}` : esc(e.msg); break;
+    case 'NAO_ABRIU': badge = '<span class="badge gold">RECUSOU</span>'; txt = `<b>A corretora/robô recusou a ordem:</b> ${esc(e.msg)}`; break;
+    case 'COMANDO': badge = '<span class="badge gold">COMANDO</span>'; txt = `<b>${esc(e.msg)}</b>`; break;
+    case 'TRAVA_DIARIA': case 'TRAVA_DRAWDOWN': badge = '<span class="badge sell">TRAVA</span>'; txt = `<b class="sell">${esc(e.msg)}</b>`; break;
+    case 'INICIO': { badge = '<span class="badge blue">INÍCIO</span>'; const kv = Object.fromEntries((e.msg.match(/(\w+)=([^\s]+)/g) || []).map(s => s.split('='))); txt = kv.simbolo ? `<b>Robô iniciado</b> em ${esc(kv.simbolo)} (${esc((kv.tf || '').replace('PERIOD_', ''))}) · conta ${esc(kv.conta)} · saldo ${f2(parseFloat(kv.saldo))} · risco ${esc(kv.risco)} por operação` : esc(e.msg); break; }
+    case 'CONFIG': badge = '<span class="badge blue">CONFIG</span>'; txt = `<b>Configuração ativa:</b> ${esc(e.msg)}`; break;
+    case 'HIERARQUIA_INFO': badge = '<span class="badge blue">NÍVEIS</span>'; txt = `<b>Leitura dos níveis ao iniciar:</b> ${esc(e.msg)}`; break;
+    case 'FIM': { badge = '<span class="badge blue">FIM</span>'; const code = (e.msg.match(/motivo=(\d+)/) || [])[1]; txt = REASONS[code] ? `<b>Robô parou:</b> ${REASONS[code]}` : esc(e.msg); break; }
+    case 'fechou_posicao': badge = '<span class="badge gold">FECHOU</span>'; txt = `<b>Posição fechada pelo robô</b> · ${esc(e.msg)}`; break;
+    case 'erro_fechar': badge = '<span class="badge sell">ERRO</span>'; txt = `<b class="sell">Não conseguiu fechar a posição</b> · ${esc(e.msg)}`; break;
+    case 'IGNOROU': badge = '<span class="badge">IGNOROU</span>'; break;
+  }
+  return `<div class="ev"><span class="t">${esc(e.t)}</span><span>${badge}</span><span class="x">${txt}</span></div>`;
+}
+function renderActivity() { const ev = D.journal.events || [], list = actF === 'all' ? ev : ev.filter(e => (GROUPS[actF] || []).includes(e.ev)); $('feed').innerHTML = list.length ? list.slice(0, 200).map(evHtml).join('') : '<div class="empty">Nada por aqui ainda.</div>'; }
+
+/* ---------- configuração ---------- */
+function renderConfig() {
+  const S = D.status || {}, M = S.mode, L = S.limits;
+  if (!M || !L) { $('cfg').innerHTML = '<div class="card"><div class="card-b empty">O robô ainda não informou a configuração. Anexe a versão 1.2 do robô.</div></div>'; return; }
+  const it = (k, v, e) => `<div class="row" style="padding:7px 0;border-top:1px solid var(--line2)"><span>${k}${e ? `<div class="mut" style="font-size:12px">${e}</div>` : ''}</span><b style="text-align:right">${v}</b></div>`;
+  const H = S.hierarchy || {};
+  $('cfg').innerHTML = `<div class="card"><div class="card-h"><h2>Modo de operação</h2></div><div class="card-b">
+    ${it('Tempo gráfico', esc((S.tf || '').replace('PERIOD_', '')), 'o do gráfico em que o robô foi anexado')}
+    ${it('Análise', M.eval_mode === 1 ? 'tempo real (preço)' : 'candle fechado', M.eval_mode === 1 ? `reavalia o preço a cada ${M.realtime_secs} s` : 'uma leitura por candle')}
+    ${it('Saída (risco : retorno)', M.rr_mode === 1 ? `fixa 1:${M.fixed_rr}` : 'pela estrutura', M.rr_mode === 1 ? `arrisca 1 para ganhar ${M.fixed_rr}` : 'alvo na próxima zona')}
+    ${it('Verificação em duas etapas', M.two_step ? `sim (${M.verify_secs} s ao vivo)` : 'não')}
+    ${it('Confluência mínima (etapa 1)', ((S.limits && S.limits.min_confluence) || M.min_certainty) + '%', 'indicadores que precisam concordar com a operação')}
+    ${it('Hierarquia de Dow', H.enabled ? `ligada · ${H.levels_required} nível(is)` : 'desligada')}
+    ${it('Notícias', M.news ? 'bloqueio ao redor de notícia forte' : 'desligado')}
+    ${it('Sentimento das manchetes', ['desligado', 'veta contra sentimento extremo', 'conta como verificação'][M.sentiment_mode] || M.sentiment_mode)}</div></div>
+    <div class="card"><div class="card-h"><h2>Limites de segurança</h2></div><div class="card-b">
+    ${it('Risco por operação', L.risk_pct + '% do saldo')}${it('Perda máxima no dia', L.max_daily_loss_pct + '%', 'para até o dia seguinte e fecha posições')}${it('Queda máxima desde o pico', L.max_drawdown_pct + '%', 'desliga o robô até você liberar')}
+    ${it('Operações por dia', L.max_trades_day)}${it('Perdas seguidas', L.max_consec_losses, 'pausa até o dia seguinte')}${it('Posições ao mesmo tempo', L.max_positions ?? '--')}${it('Spread máximo', 'US$ ' + f2(L.max_spread))}${it('R:R mínimo', f2(L.min_rr))}${it('Confirmações mínimas', L.min_conf)}</div>
+    <div class="foot" style="padding:0 16px 14px">Para mudar qualquer valor: no MT5, F7 no gráfico com o robô → aba Inputs. O painel não altera a configuração, só envia pausar, retomar, fechar tudo e desligar.</div></div>`;
+}
+
+/* ---------- ciclo ---------- */
+async function tick(quiet) {
+  try { try { const ro = await fetch('/api/robots'); ROBOTS = (await ro.json()).robots || []; renderSymBar(); } catch {} const r = await fetch('/api/robot?sym=' + encodeURIComponent(SYM)); D = await r.json(); if (D.error) throw new Error(D.error); render(); }
+  catch (e) { if (!quiet) { $('alive').className = 'pill bad'; $('alive').innerHTML = '<i></i>painel sem conexão com o servidor'; } }
+}
+async function tickNews() { try { const r = await fetch('/api/news?sym=' + encodeURIComponent(SYM)); NEWS = await r.json(); if (D && tab === 'news') renderNews(); } catch { NEWS = { error:true }; } }
+showTab(tab); tick(); tickNews(); setInterval(tick, 5000); setInterval(() => { if (tab === 'diary') loadDiary(); if (tab === 'valid') loadValid(); }, 20000); setInterval(tickNews, 60000);
+</script>
+<script src="/vila.js"></script>
+</body>
+</html>

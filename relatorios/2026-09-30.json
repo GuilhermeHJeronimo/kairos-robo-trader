@@ -1,0 +1,17 @@
+{
+ "dia": "2026-09-30",
+ "fechado": true,
+ "entradas": 5,
+ "fechados": 5,
+ "takes": 0,
+ "usd": -202.92,
+ "r": -4.03,
+ "por_ativo": {
+  "Ouro": {
+   "fechados": 5,
+   "takes": 0,
+   "usd": -202.92,
+   "r": -4.03
+  }
+ }
+}

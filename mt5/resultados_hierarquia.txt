@@ -1,0 +1,11 @@
+# lote iniciado 2026-09-30 13:28:53
+H1 | 2021.01.01..2026.09.26 | sem hierarquia | sinais=1212 | operações=339 | acerto=35.7% | R total=-10.8 | R/op=-0.032 ±0.136 | fator lucro=0.94 | lucro=US$ -611 | 29s
+H1 | 2021.01.01..2026.09.26 | 1 nível        | sinais=1212 | operações=406 | acerto=41.6% | R total=+62.8 | R/op=+0.155 ±0.132 | fator lucro=1.29 | lucro=US$ +3514 | 32s
+H1 | 2021.01.01..2026.09.26 | 2 níveis       | sinais=1212 | operações=281 | acerto=40.9% | R total=+33.9 | R/op=+0.121 ±0.154 | fator lucro=1.22 | lucro=US$ +1750 | 31s
+H1 | 2021.01.01..2026.09.26 | 3 níveis       | sinais=1212 | operações=141 | acerto=36.2% | R total=-6.5 | R/op=-0.046 ±0.195 | fator lucro=0.91 | lucro=US$ -352 | 30s
+M15 | 2024.01.01..2026.09.26 | sem hierarquia | sinais=3110 | operações=347 | acerto=37.8% | R total=+46.0 | R/op=+0.133 ±0.157 | fator lucro=1.20 | lucro=US$ +2431 | 51s
+M15 | 2024.01.01..2026.09.26 | 1 nível        | sinais=3110 | operações=600 | acerto=39.0% | R total=+77.1 | R/op=+0.128 ±0.117 | fator lucro=1.19 | lucro=US$ +4374 | 66s
+M15 | 2024.01.01..2026.09.26 | 2 níveis       | sinais=3110 | operações=396 | acerto=37.4% | R total=+22.2 | R/op=+0.056 ±0.133 | fator lucro=1.08 | lucro=US$ +1033 | 64s
+M15 | 2024.01.01..2026.09.26 | 3 níveis       | sinais=3110 | operações=0 | 63s
+M5 | 2024.01.01..2026.09.26 | sem hierarquia | sinais=9045 | operações=180 | acerto=31.1% | R total=-10.1 | R/op=-0.056 ±0.210 | fator lucro=0.91 | lucro=US$ -550 | 127s
+M5 | 2024.01.01..2026.09.26 | 1 nível        | sinais=9045 | operações=66 | acerto=25.8% | R total=-14.0 | R/op=-0.212 ±0.297 | fator lucro=0.69 | lucro=US$ -690 | 164s

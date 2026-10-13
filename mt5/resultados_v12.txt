@@ -1,0 +1,18 @@
+# matriz iniciada 2026-09-30 13:43:53
+H1 estrutura, sem hierarquia | desde 2021.11.01 | ops=720 (ultima 2026.09.24) | acerto=38.5% | R total=+28.1 | R/op=+0.039 ±0.093 | FP=1.06 | lucro=US$ +1291 | maior queda=US$ 1182
+H1 estrutura, sem hierarquia | desde 2023.09.01 | ops=441 (ultima 2026.09.24) | acerto=39.7% | R total=+35.4 | R/op=+0.080 ±0.120 | FP=1.14 | lucro=US$ +1719 | maior queda=US$ 1182
+H1 estrutura, hierarquia 1 nivel | desde 2021.11.01 | ops=406 (ultima 2026.09.17) | acerto=41.6% | R total=+62.8 | R/op=+0.155 ±0.132 | FP=1.29 | lucro=US$ +3514 | maior queda=US$ 973
+H1 estrutura, hierarquia 1 nivel | desde 2023.09.01 | ops=269 (ultima 2026.09.17) | acerto=42.8% | R total=+52.6 | R/op=+0.196 ±0.165 | FP=1.37 | lucro=US$ +3032 | maior queda=US$ 973
+H1 estrutura, hierarquia 2 niveis | desde 2021.11.01 | ops=281 (ultima 2026.09.03) | acerto=40.9% | R total=+33.9 | R/op=+0.121 ±0.154 | FP=1.22 | lucro=US$ +1750 | maior queda=US$ 829
+H1 estrutura, hierarquia 2 niveis | desde 2023.09.01 | ops=234 (ultima 2026.09.03) | acerto=41.5% | R total=+31.3 | R/op=+0.134 ±0.170 | FP=1.25 | lucro=US$ +1629 | maior queda=US$ 703
+H1 fixa 1:3, sem hierarquia | desde 2021.11.01 | ops=2402 (ultima 2026.09.25) | acerto=29.7% | R total=-15.4 | R/op=-0.006 ±0.057 | FP=0.98 | lucro=US$ -1430 | maior queda=US$ 2589
+H1 fixa 1:3, sem hierarquia | desde 2023.09.01 | ops=1450 (ultima 2026.09.25) | acerto=30.1% | R total=+24.3 | R/op=+0.017 ±0.072 | FP=1.02 | lucro=US$ +644 | maior queda=US$ 2297
+H1 fixa 1:3, hierarquia 1 nivel | desde 2021.11.01 | ops=1547 (ultima 2026.09.25) | acerto=33.9% | R total=+195.4 | R/op=+0.126 ±0.078 | FP=1.18 | lucro=US$ +14726 | maior queda=US$ 4999
+H1 fixa 1:3, hierarquia 1 nivel | desde 2023.09.01 | ops=981 (ultima 2026.09.25) | acerto=34.0% | R total=+132.9 | R/op=+0.135 ±0.098 | FP=1.19 | lucro=US$ +11437 | maior queda=US$ 4999
+H1 fixa 1:3, hierarquia 2 niveis | desde 2021.11.01 | ops=982 (ultima 2026.09.04) | acerto=34.7% | R total=+159.1 | R/op=+0.162 ±0.099 | FP=1.24 | lucro=US$ +11202 | maior queda=US$ 3654
+H1 fixa 1:3, hierarquia 2 niveis | desde 2023.09.01 | ops=822 (ultima 2026.09.04) | acerto=34.3% | R total=+119.9 | R/op=+0.146 ±0.107 | FP=1.22 | lucro=US$ +9131 | maior queda=US$ 3654
+H1 fixa 1:3, hier. 1 nivel, duas etapas (30 s) | desde 2021.11.01 | ops=1518 (ultima 2026.09.25) | acerto=33.9% | R total=+174.6 | R/op=+0.115 ±0.078 | FP=1.16 | lucro=US$ +12343 | maior queda=US$ 5348
+H1 fixa 1:3, hier. 1 nivel, duas etapas (30 s) | desde 2023.09.01 | ops=961 (ultima 2026.09.25) | acerto=34.1% | R total=+111.9 | R/op=+0.116 ±0.097 | FP=1.16 | lucro=US$ +9037 | maior queda=US$ 5348
+H1 fixa 1:3, hier. 1 nivel, duas etapas + certeza 70 | desde 2021.11.01 | ops=1505 (ultima 2026.09.25) | acerto=33.8% | R total=+163.3 | R/op=+0.108 ±0.078 | FP=1.15 | lucro=US$ +11153 | maior queda=US$ 5150
+H1 fixa 1:3, hier. 1 nivel, duas etapas + certeza 70 | desde 2023.09.01 | ops=955 (ultima 2026.09.25) | acerto=33.9% | R total=+104.3 | R/op=+0.109 ±0.097 | FP=1.15 | lucro=US$ +8083 | maior queda=US$ 5150
+# matriz concluida
